@@ -11,5 +11,7 @@
     <orderEntry type="library" name="jakarta.mail-2.0.1" level="project" />
     <orderEntry type="library" name="javafaker-1.0.2" level="project" />
     <orderEntry type="library" name="gson-2.10.1" level="project" />
+    <orderEntry type="library" name="snakeyaml-1.23" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.5" level="project" />
   </component>
 </module>

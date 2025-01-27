@@ -1,0 +1,72 @@
+[
+  {
+    "username": "Miss Leeanna Kihn",
+    "email": "bertram.wiegand@hotmail.com",
+    "password": "swvll5hjn1l1",
+    "role": "user",
+    "id": 1
+  },
+  {
+    "username": "Reggie Murphy",
+    "email": "emery.kuhn@hotmail.com",
+    "password": "el5v6k29350",
+    "role": "admin",
+    "id": 2
+  },
+  {
+    "username": "Earnest Champlin",
+    "email": "meridith.stanton@yahoo.com",
+    "password": "o0266qjj5q",
+    "role": "admin",
+    "id": 3
+  },
+  {
+    "username": "Efren Hudson",
+    "email": "lanny.macgyver@gmail.com",
+    "password": "2248pmjmxgcc6gd",
+    "role": "admin",
+    "id": 4
+  },
+  {
+    "username": "Dr. Waldo Murphy",
+    "email": "casie.beahan@hotmail.com",
+    "password": "1adg0f22xpbv",
+    "role": "admin",
+    "id": 5
+  },
+  {
+    "username": "Lela Brown III",
+    "email": "tristan.kovacek@hotmail.com",
+    "password": "aiye7hs1n0t2dp",
+    "role": "user",
+    "id": 6
+  },
+  {
+    "username": "Dr. Vennie Sawayn",
+    "email": "benito.zemlak@yahoo.com",
+    "password": "6rwnhugoof1l",
+    "role": "user",
+    "id": 7
+  },
+  {
+    "username": "Neville Bernier",
+    "email": "avery.keebler@gmail.com",
+    "password": "7a65255lt0",
+    "role": "admin",
+    "id": 8
+  },
+  {
+    "username": "Ardith Rowe",
+    "email": "otis.bernhard@hotmail.com",
+    "password": "wowi7sltcb7uz",
+    "role": "admin",
+    "id": 9
+  },
+  {
+    "username": "Porfirio Runolfsdottir",
+    "email": "patria.botsford@gmail.com",
+    "password": "uwnzp9vkxsnjzsw",
+    "role": "user",
+    "id": 10
+  }
+]

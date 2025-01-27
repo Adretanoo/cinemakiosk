@@ -1,21 +1,42 @@
 package com.adrian.cinemakiosk;
 
 import com.adrian.cinemakiosk.domain.entitys.impl.User;
-import com.adrian.cinemakiosk.domain.validators.UserValidator;
+import com.github.javafaker.Faker;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-//        Mailler.sendVerificationCodeEmail("c.tehza.adrian@student.uzhnu.edu.ua", "sdlkfjkds");
+        Faker faker = new Faker();
+        List<User> users = new ArrayList<>();
 
-        User user = new User(-1, "", "adrianzail.com", "12345678D", "f");
-        try {
-            UserValidator.validate(user);
-            System.out.println("Валідаці успішна");
-        } catch (IllegalArgumentException e) {
-            String errorMessage = e.getMessage();
-            System.out.println("Помилки валідації: " + errorMessage);
+        for (int i = 0; i < 10; i++) {
+            User user = new User(
+                i + 1,
+                faker.name().fullName(),
+                faker.internet().emailAddress(),
+                faker.internet().password(),
+                faker.bool().bool() ? "user" : "admin"
+            );
+            users.add(user);
+
+            System.out.println(user);
         }
+        saveToJsonFile("data/users.json", users);
     }
 
+    private static void saveToJsonFile(String filePath, Object data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter(filePath)) {
+            gson.toJson(data, writer);
+            System.out.println("Дані збережено до файлу: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
