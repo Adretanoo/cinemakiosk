@@ -15,7 +15,6 @@ public class DataGenerator {
         Faker faker = new Faker();
         List<User> users = new ArrayList<>();
 
-        // Генерація 10 користувачів
         for (int i = 0; i < 10; i++) {
             User user = new User(
                 i + 1,
@@ -27,7 +26,6 @@ public class DataGenerator {
             users.add(user);
         }
 
-        // Збереження до JSON
         saveToJsonFile("data/users.json", users);
     }
 

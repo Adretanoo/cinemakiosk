@@ -1,6 +1,6 @@
 package com.adrian.cinemakiosk.appui.pages;
 
-import com.adrian.cinemakiosk.domain.servise.validators.UserValidator;
+import com.adrian.cinemakiosk.domain.servise.EmailService;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import com.googlecode.lanterna.TextColor;
@@ -10,109 +10,80 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import org.mindrot.bcrypt.BCrypt;
 
-public class RegistrationView {
+public class SignUpView {
 
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final UserRepository userRepository;
+    private final EmailService mailler;
 
-    public RegistrationView(Screen screen, TextGraphics textGraphics,
-        UserRepository userRepository) {
+    public SignUpView(Screen screen, TextGraphics textGraphics, UserRepository userRepository) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.userRepository = userRepository;
+        this.mailler = new EmailService();
     }
 
-    public void showRegistrationForm() throws IOException {
+    public void showLoginForm() throws IOException {
         while (true) {
             screen.clear();
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-
             textGraphics.putString(0, 0, "┌──────────────────────────┐");
             textGraphics.putString(0, 1, "│                          │");
-            textGraphics.putString(0, 2, "│      РЕЄСТРАЦІЯ          │");
+            textGraphics.putString(0, 2, "│      АВТОРИЗАЦІЯ         │");
             textGraphics.putString(0, 3, "│                          │");
             textGraphics.putString(0, 4, "└──────────────────────────┘");
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-            textGraphics.putString(2, 15, "Натисніть ESC, щоб завершити реєстрацію.");
+            textGraphics.putString(2, 15, "Натисніть ESC, щоб завершити авторизацію.");
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
 
-            String username = promptInput("Введіть ім'я користувача:", 6);
-            if (username == null) {
-                screen.clear();
-                return;
-            }
-
-            try {
-                UserValidator.validateUsername(username);
-            } catch (IllegalArgumentException e) {
-                displayError(e.getMessage(), 13);
-                continue;
-            }
-
-            String email = null;
-            if (userRepository.existsByEmail(email)) {
-                displayError("Користувач з такою поштою вже існує.", 13);
-                continue;
-            }
-
-            email = promptInput("Введіть електронну пошту:", 8);
+            String email = promptInput("Введіть електронну пошту:", 6);
             if (email == null) {
                 screen.clear();
                 return;
             }
 
-            try {
-                UserValidator.validateEmail(email);
-            } catch (IllegalArgumentException e) {
-                displayError(e.getMessage(), 13);
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                displayError("Користувача з такою поштою не знайдено.", 13);
                 continue;
             }
 
-            if (userRepository.existsByEmail(email)) {
-                displayError("Користувач з такою поштою вже існує.", 13);
-                continue;
-            }
-
-            String password = promptPassword("Введіть пароль:", 10);
+            String password = promptPassword("Введіть пароль:", 8);
             if (password == null) {
                 screen.clear();
                 return;
             }
 
-            try {
-                UserValidator.validatePassword(password);
-            } catch (IllegalArgumentException e) {
-                displayError(e.getMessage(), 13);
+            // Перевірка паролю
+            if (!BCrypt.checkpw(password, user.getPassword())) {
+                displayError("Невірний пароль.", 13);
                 continue;
             }
 
-            // Хешування пароля
-            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            String verificationCode = EmailService.generateAndSendVerificationCode(email);
 
-            String role = promptRole("Виберіть роль (admin/user):", 12);
-            if (role == null) {
+            String inputCode = promptInput("Введіть код підтвердження, надісланий на пошту:", 10);
+            if (inputCode == null) {
                 screen.clear();
                 return;
             }
 
-            User newUser = new User(0, username, email, hashedPassword, role);
-
-            try {
-                userRepository.save(newUser);
-
-                textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
-                textGraphics.putString(2, 17,
-                    "Реєстрація успішна! Натисніть будь-яку клавішу для продовження.");
-                textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-                screen.refresh();
-                screen.readInput();
-                return;
-            } catch (Exception e) {
-                displayError("Помилка збереження користувача: " + e.getMessage(), 13);
+            if (!verificationCode.equals(inputCode)) {
+                displayError("Невірний код підтвердження.", 13);
+                continue;
             }
+
+            // Авторизація успішна
+            textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
+            textGraphics.putString(2, 17,
+                "Авторизація успішна! Натисніть будь-яку клавішу для продовження.");
+            textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+            screen.refresh();
+            screen.readInput();
+            return;
         }
     }
 
@@ -179,23 +150,6 @@ public class RegistrationView {
         }
 
         return input.toString().trim();
-    }
-
-    private String promptRole(String prompt, int yPos) throws IOException {
-        textGraphics.putString(2, yPos, prompt);
-        screen.refresh();
-
-        while (true) {
-            String role = promptInput("(admin/user)", yPos + 1);
-            if (role == null || role.isEmpty()) {
-                return null;
-            }
-            if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("user")) {
-                return role.toLowerCase();
-            } else {
-                displayError("Невірна роль. Оберіть admin або user.", yPos + 2);
-            }
-        }
     }
 
     private void clearInputArea(int yPos) throws IOException {

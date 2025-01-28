@@ -17,6 +17,7 @@ import com.adrian.cinemakiosk.persistence.repository.impl.SeatRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.SessionRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.TicketRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
+import java.io.IOException;
 
 public class UnitOfWork {
 
@@ -29,7 +30,7 @@ public class UnitOfWork {
     private final HallRepository hallRepository;
     private final UserRepository userRepository;
 
-    public UnitOfWork() {
+    public UnitOfWork() throws IOException {
         this.ticketRepository = new TicketRepository();
         this.sessionRepository = new SessionRepository();
         this.seatRepository = new SeatRepository();

@@ -1,4 +1,4 @@
-package com.adrian.cinemakiosk;
+package com.adrian.cinemakiosk.domain.servise;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
@@ -11,7 +11,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
-public class Mailler {
+public class EmailService {
 
     private static LocalDateTime codeCreationTime;
 
@@ -58,7 +58,7 @@ public class Mailler {
         }
     }
 
-    private static String generateAndSendVerificationCode(String email) {
+    public static String generateAndSendVerificationCode(String email) {
         // Генерація 6-значного коду
         String verificationCode = String.valueOf((int) (Math.random() * 900000 + 100000));
 
