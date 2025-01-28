@@ -83,6 +83,10 @@ public class SignUpView {
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
             screen.refresh();
             screen.readInput();
+
+            // Перехід до головного меню після авторизації
+            UserMenuView userMenuView = new UserMenuView(screen, textGraphics, user.getUsername());
+            userMenuView.showMenu();
             return;
         }
     }
