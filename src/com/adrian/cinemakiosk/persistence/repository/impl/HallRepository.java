@@ -4,7 +4,7 @@ import com.adrian.cinemakiosk.persistence.entity.impl.Hall;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
-class HallRepository extends BaseRepository<Hall> {
+public class HallRepository extends BaseRepository<Hall> {
 
     public HallRepository() {
         super("data/halls.json", new TypeToken<List<Hall>>() {

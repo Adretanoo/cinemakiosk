@@ -4,7 +4,7 @@ import com.adrian.cinemakiosk.persistence.entity.impl.Session;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
-class SessionRepository extends BaseRepository<Session> {
+public class SessionRepository extends BaseRepository<Session> {
 
     public SessionRepository() {
         super("data/sessions.json", new TypeToken<List<Session>>() {

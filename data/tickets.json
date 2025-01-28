@@ -1,1 +1,1 @@
-[{"id":1,"price":220.0,"status":"A1","ticketType":"BB","sessionId":1,"seatId":1,"orderId":1}]
+[{"id":1,"price":220.0,"status":"A1","ticketType":"BB","sessionId":1,"seatId":1,"orderId":1},{"id":1,"price":10.0,"status":"available","ticketType":"VIP","sessionId":1,"seatId":1,"orderId":1}]

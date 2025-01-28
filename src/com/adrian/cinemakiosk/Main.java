@@ -1,9 +1,10 @@
 package com.adrian.cinemakiosk;
 
 import com.adrian.cinemakiosk.domain.servise.uow.UnitOfWork;
+import com.adrian.cinemakiosk.persistence.entity.impl.Payment;
+import com.adrian.cinemakiosk.persistence.entity.impl.Seat;
+import com.adrian.cinemakiosk.persistence.entity.impl.Session;
 import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
-import com.adrian.cinemakiosk.persistence.repository.Repository;
-import java.util.List;
 
 public class Main {
 
@@ -38,33 +39,36 @@ public class Main {
 
 
     public static void main(String[] args) {
+
         UnitOfWork unitOfWork = new UnitOfWork();
-        Repository<Ticket> ticketRepo = (Repository<Ticket>) unitOfWork.getRepository(Ticket.class);
 
-        // Create (Add)
-        Ticket ticket1 = new Ticket(1, 500, "A1", "BB", 1, 1, 1);
-        Ticket ticket2 = new Ticket(2, 300, "B2", "AA", 2, 2, 2);
-        ticketRepo.add(ticket1);
-        ticketRepo.add(ticket2);
+        Ticket newTicket = new Ticket(1, 10.0, "available", "VIP", 1, 1, 1);
 
-        // Read (Get All)
-        List<Ticket> tickets = ticketRepo.getAll();
-        tickets.forEach(System.out::println);
+        unitOfWork.getRepository(Ticket.class).add(newTicket);
 
-        // Update
-        ticket1.setPrice(220.00);
-        ticketRepo.update(ticket1);
+        Ticket ticketFromRepo = unitOfWork.getRepository(Ticket.class).getById(1);
+        System.out.println("Збережений квиток: " + ticketFromRepo.getId() + ", Тип: "
+            + ticketFromRepo.getTicketType());
+        Session newSession = new Session(1, "2025-01-28 14:00", "2D", 1, 1);
+        unitOfWork.getRepository(Session.class).add(newSession);
 
-        // Get by ID
-        Ticket foundTicket = ticketRepo.getById(1);
-        System.out.println("Found Ticket: " + foundTicket);
+        Session sessionFromRepo = unitOfWork.getRepository(Session.class).getById(1);
+        System.out.println("Збережена сесія: " + sessionFromRepo.getId() + ", Фільм ID: "
+            + sessionFromRepo.getMovieId());
 
-        // Filter
-        List<Ticket> filteredTickets = ticketRepo.filter("movieName", "Avatar");
-        filteredTickets.forEach(System.out::println);
+        Seat newSeat = new Seat(1, 10, 5, 1);
+        unitOfWork.getRepository(Seat.class).add(newSeat);
 
-        // Delete
-        ticketRepo.deleteById(2);
+        Seat seatFromRepo = unitOfWork.getRepository(Seat.class).getById(1);
+        System.out.println("Збережене місце: " + seatFromRepo.getId() + ", Місце: "
+            + seatFromRepo.getSeatNumber());
+
+        Payment newPayment = new Payment(1, 20.0, "2025-01-28 15:00", "card", 1);
+        unitOfWork.getRepository(Payment.class).add(newPayment);
+
+        Payment paymentFromRepo = unitOfWork.getRepository(Payment.class).getById(1);
+        System.out.println("Збережений платіж: " + paymentFromRepo.getId() + ", Сума: "
+            + paymentFromRepo.getAmount());
     }
 
 }
