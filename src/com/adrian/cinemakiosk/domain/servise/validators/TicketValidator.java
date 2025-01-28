@@ -1,6 +1,6 @@
-package com.adrian.cinemakiosk.domain.validators;
+package com.adrian.cinemakiosk.domain.servise.validators;
 
-import com.adrian.cinemakiosk.domain.entitys.impl.Ticket;
+import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
 import java.util.ArrayList;
 import java.util.List;
 

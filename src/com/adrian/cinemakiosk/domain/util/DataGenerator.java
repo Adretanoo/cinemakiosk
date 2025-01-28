@@ -1,6 +1,6 @@
 package com.adrian.cinemakiosk.domain.util;
 
-import com.adrian.cinemakiosk.domain.entitys.impl.User;
+import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

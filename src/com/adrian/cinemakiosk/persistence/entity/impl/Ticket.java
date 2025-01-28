@@ -1,4 +1,4 @@
-package com.adrian.cinemakiosk.domain.entitys.impl;
+package com.adrian.cinemakiosk.persistence.entity.impl;
 
 public class Ticket {
 
