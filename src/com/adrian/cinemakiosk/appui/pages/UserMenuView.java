@@ -1,7 +1,9 @@
 package com.adrian.cinemakiosk.appui.pages;
 
 import com.adrian.cinemakiosk.persistence.entity.impl.Movie;
+import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.MovieRepository;
+import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
@@ -15,12 +17,17 @@ public class UserMenuView {
     private final TextGraphics textGraphics;
     private final String username;
     private double balance;
+    private UserRepository userRepository;
+    private String email;
 
-    public UserMenuView(Screen screen, TextGraphics textGraphics, String username, double balance) {
+    public UserMenuView(Screen screen, TextGraphics textGraphics, String username,
+        String email, double balance, UserRepository userRepository) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.username = username;
+        this.email = email;
         this.balance = balance;
+        this.userRepository = userRepository;
     }
 
     public void showMenu() throws IOException {
@@ -83,15 +90,23 @@ public class UserMenuView {
         screen.refresh();
     }
 
-    private void drawMenuFrame() {
+    private void drawMenuFrame() throws IOException {
+        // Очищаємо область для старого балансу
+        textGraphics.putString(0, 3, "                        "); // Очищаємо попередній баланс
+
+        // Виводимо рамку меню
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌──────────────────────────┐");
         textGraphics.putString(0, 1, "│                          │");
         textGraphics.putString(0, 2, "      " + username + "      ");  // Ім'я користувача
+
+        // Виводимо оновлений баланс
         textGraphics.putString(0, 3, "       " + balance + "      ");
+
         textGraphics.putString(0, 4, "│                          │");
         textGraphics.putString(0, 5, "└──────────────────────────┘");
 
+        // Виведення іншого вмісту меню
         textGraphics.putString(0, 6, "┌──────────────────────────┐");
         textGraphics.putString(0, 7, "│                          │");
         textGraphics.putString(0, 8, "│                          │");
@@ -101,6 +116,9 @@ public class UserMenuView {
         textGraphics.putString(0, 12, "│                          │");
         textGraphics.putString(0, 13, "│                          │");
         textGraphics.putString(0, 14, "└──────────────────────────┘");
+
+        // Оновлюємо екран
+        screen.refresh();
     }
 
     private void highlightOption(String option, int x, int y) {
@@ -134,17 +152,40 @@ public class UserMenuView {
                 System.out.println("Перейшли до Пошуку фільмів");
                 MovieRepository searchRepository = new MovieRepository();
                 List<Movie> searchMovieList = searchRepository.getAll();
-                MovieSearchView movieSearchView = new MovieSearchView(screen, textGraphics,
-                    searchMovieList);
+                MovieSearchView movieSearchView = new MovieSearchView(screen, textGraphics, searchMovieList);
                 movieSearchView.displaySearchMenu();
                 break;
             case 2:
                 System.out.println("Поповнення балансу");
-                AddBalanceMenuView addBalanceMenuView = new AddBalanceMenuView(screen, textGraphics,
-                    balance);
-                balance = addBalanceMenuView.showMenu();
-                System.out.println("Новий баланс: " + balance);
+
+                // Отримуємо користувача
+                User currentUser = userRepository.findByEmail(email);
+                if (currentUser == null) {
+                    System.out.println("Помилка: Користувач не авторизований!");
+                    break;
+                }
+
+                // Створюємо AddBalanceMenuView і передаємо туди поточного користувача
+                AddBalanceMenuView addBalanceMenuView = new AddBalanceMenuView(screen, textGraphics, userRepository, currentUser);
+                addBalanceMenuView.showMenu();  // Показуємо меню для поповнення балансу
+
+                // Після поповнення балансу, оновлюємо користувача і перерисовуємо меню
+                currentUser = userRepository.findByEmail(email);  // Отримуємо оновленого користувача
+                balance = currentUser.getBalance();  // Оновлюємо баланс
+
+                // Оновлюємо меню з новим балансом
+                renderMenu(new String[]{
+                    "1. Перегляд афіш",
+                    "2. Пошук афіш",
+                    "3. Поповнити баланс",
+                    "4. Купівля квитків",
+                    "5. Налаштування",
+                    "6. Вийти"
+                }, 0);  // Оновлюємо меню з новим балансом
+
+                System.out.println("Новий баланс: " + currentUser.getBalance());
                 break;
+
             case 3:
                 System.out.println("Перейшли до Пошуку фільмів");
                 // Пошук фільмів
@@ -161,6 +202,5 @@ public class UserMenuView {
                 throw new IllegalStateException("Невідомий вибір: " + selectedIndex);
         }
     }
-
 
 }

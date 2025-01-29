@@ -76,7 +76,7 @@ public class SignUpView {
                 adminMenuView.showMenu();
             } else if ("user".equals(user.getRole())) {
                 UserMenuView userMenuView = new UserMenuView(screen, textGraphics,
-                    user.getUsername(), user.getBalance());
+                    user.getUsername(), user.getEmail(), user.getBalance(), userRepository);
                 userMenuView.showMenu();
             }
 

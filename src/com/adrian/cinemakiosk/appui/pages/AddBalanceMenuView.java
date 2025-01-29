@@ -1,5 +1,7 @@
 package com.adrian.cinemakiosk.appui.pages;
 
+import com.adrian.cinemakiosk.persistence.entity.impl.User;
+import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.googlecode.lanterna.TextColor;
@@ -15,42 +17,72 @@ public class AddBalanceMenuView {
     private static final String USER_FILE = "data/user.json";
     private final Screen screen;
     private final TextGraphics textGraphics;
+    private final UserRepository userRepository;
+    private final User currentUser;
     private double balance;
     private String inputAmount = "";
 
-    public AddBalanceMenuView(Screen screen, TextGraphics textGraphics, double balance) {
+    public AddBalanceMenuView(Screen screen, TextGraphics textGraphics,
+        UserRepository userRepository, User currentUser) {
         this.screen = screen;
         this.textGraphics = textGraphics;
-        this.balance = loadBalanceFromFile(); // Завантажуємо баланс при створенні
+        this.userRepository = userRepository;
+        this.currentUser = currentUser;
+        this.balance = currentUser.getBalance();
     }
 
     public double showMenu() throws IOException {
         while (true) {
-            renderMenu();
+            renderMenu(); // Намалювати меню
             var keyStroke = screen.readInput();
 
+            // Якщо натиснута клавіша ESC, оновлюємо баланс і виходимо
             if (keyStroke.getKeyType() == KeyType.Escape) {
-                saveBalanceToFile();
-                return balance;
-            } else if (keyStroke.getKeyType() == KeyType.Backspace && !inputAmount.isEmpty()) {
+                userRepository.updateBalance(currentUser.getEmail(), balance); // Оновлюємо баланс у репозиторії
+                return balance; // Виходимо з меню
+            }
+
+            // Якщо натиснута клавіша Backspace - видаляємо останній символ
+            else if (keyStroke.getKeyType() == KeyType.Backspace && !inputAmount.isEmpty()) {
                 inputAmount = inputAmount.substring(0, inputAmount.length() - 1);
-            } else if (keyStroke.getKeyType() == KeyType.Enter) {
+            }
+
+            // Якщо натиснута клавіша Enter, перевіряємо введену суму
+            else if (keyStroke.getKeyType() == KeyType.Enter) {
                 try {
-                    double amount = Double.parseDouble(inputAmount);
-                    if (amount != 0 && balance + amount >= 0) {
-                        balance += amount;
-                        inputAmount = "";
-                        saveBalanceToFile();
+                    double amount = Double.parseDouble(inputAmount); // Перетворюємо введену суму в число
+                    if (amount != 0 && balance + amount >= 0) { // Перевірка, чи коректна сума
+                        balance += amount; // Оновлюємо баланс
+                        inputAmount = ""; // Очищаємо введену суму
+                        userRepository.updateBalance(currentUser.getEmail(), balance); // Оновлюємо баланс у репозиторії
+
+                        // Очищаємо область для відображення балансу
+                        textGraphics.putString(2, 3, "                        "); // Очищаємо попередній баланс
+
+                        // Виводимо новий баланс
+                        textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
+                        textGraphics.putString(2, 3, "Поточний баланс: " + balance + " грн");
+
+                        // Оновлюємо екран
+                        screen.refresh();
                     }
                 } catch (NumberFormatException e) {
+                    // Якщо введене значення не є числом
                     inputAmount = "";
+                    textGraphics.setForegroundColor(TextColor.Factory.fromString("#FF0000"));
+                    textGraphics.putString(2, 4, "Помилка: введіть число.");
+                    screen.refresh(); // Оновлюємо екран
                 }
-            } else if (keyStroke.getCharacter() != null && (
+            }
+
+            // Якщо натиснута клавіша для введення числа або мінуса
+            else if (keyStroke.getCharacter() != null && (
                 Character.isDigit(keyStroke.getCharacter()) || keyStroke.getCharacter() == '-')) {
                 inputAmount += keyStroke.getCharacter();
             }
         }
     }
+
 
     private void renderMenu() throws IOException {
         screen.clear();
