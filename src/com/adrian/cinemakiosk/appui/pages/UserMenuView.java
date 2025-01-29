@@ -1,14 +1,21 @@
 package com.adrian.cinemakiosk.appui.pages;
 
 import com.adrian.cinemakiosk.persistence.entity.impl.Movie;
+import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.MovieRepository;
+import com.adrian.cinemakiosk.persistence.repository.impl.TicketRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserMenuView {
@@ -19,6 +26,7 @@ public class UserMenuView {
     private double balance;
     private UserRepository userRepository;
     private String email;
+    private static final String FILE_PATH = "data/tickets.json";
 
     public UserMenuView(Screen screen, TextGraphics textGraphics, String username,
         String email, double balance, UserRepository userRepository) {
@@ -187,9 +195,22 @@ public class UserMenuView {
                 break;
 
             case 3:
-                System.out.println("Перейшли до Пошуку фільмів");
-                // Пошук фільмів
+                System.out.println("Перейшли до купівлі квитків");
+
+                TicketRepository ticketRepository = new TicketRepository();
+                List<Ticket> availableTickets = ticketRepository.getAvailableTickets(); // Отримуємо доступні квитки
+
+                if (availableTickets.isEmpty()) {
+                    System.out.println("Немає доступних квитків.");
+                    break;
+                }
+
+                currentUser = userRepository.findByEmail(email);
+                // Використовуємо наявні screen та textGraphics
+                TicketPurchaseView ticketPurchaseView = new TicketPurchaseView(screen, textGraphics, currentUser, ticketRepository, userRepository);
+                ticketPurchaseView.showPurchaseMenu();
                 break;
+
             case 4:
                 System.out.println("Перейшли до Налаштувань");
                 // Налаштування
@@ -202,5 +223,6 @@ public class UserMenuView {
                 throw new IllegalStateException("Невідомий вибір: " + selectedIndex);
         }
     }
+
 
 }

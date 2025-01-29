@@ -20,9 +20,6 @@ public class TicketValidator {
                 errors.add("\nЦіна квитка має бути більшою за 0");
             }
 
-            if (ticket.getSeatId() <= 0) {
-                errors.add("\nID місця має бути додатнім числом");
-            }
 
             if (ticket.getSessionId() <= 0) {
                 errors.add("\nID сеансу має бути додатнім числом");

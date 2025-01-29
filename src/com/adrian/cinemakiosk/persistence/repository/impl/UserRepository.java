@@ -109,5 +109,17 @@ public class UserRepository extends BaseRepository<User> {
         return null;  // Якщо користувача не знайдено
     }
 
+    public void updateUser(User updatedUser) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getEmail().equals(updatedUser.getEmail())) {
+                users.set(i, updatedUser);  // Оновлюємо користувача в списку
+                saveToFile();  // Зберігаємо оновлені дані в файл
+                System.out.println("Дані користувача оновлено: " + updatedUser);
+                return;
+            }
+        }
+        System.out.println("Користувача з такою електронною поштою не знайдено.");
+    }
+
 
 }
