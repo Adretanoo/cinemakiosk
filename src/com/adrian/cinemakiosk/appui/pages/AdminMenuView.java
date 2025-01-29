@@ -70,11 +70,21 @@ public class AdminMenuView {
 
     private void drawMenuFrame() {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-        textGraphics.putString(0, 0, "┌──────────────────────────┐");
-        textGraphics.putString(0, 1, "│                          │");
-        textGraphics.putString(0, 2, "│      Адмін Меню          │");
-        textGraphics.putString(0, 3, "│                          │");
-        textGraphics.putString(0, 4, "└──────────────────────────┘");
+        textGraphics.putString(0, 0, "┌────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                                │");
+        textGraphics.putString(0, 2, "       Admin: " + username + "     ");
+        textGraphics.putString(0, 3, "│                                │");
+        textGraphics.putString(0, 4, "└────────────────────────────────┘");
+
+        textGraphics.putString(0, 5, "┌────────────────────────────────┐");
+        textGraphics.putString(0, 6, "│                                │");
+        textGraphics.putString(0, 7, "│                                │");
+        textGraphics.putString(0, 8, "│                                │");
+        textGraphics.putString(0, 9, "│                                │");
+        textGraphics.putString(0, 10, "│                                │");
+        textGraphics.putString(0, 11, "│                                │");
+        textGraphics.putString(0, 12, "│                                │");
+        textGraphics.putString(0, 13, "└────────────────────────────────┘");
     }
 
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {

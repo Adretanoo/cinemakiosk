@@ -1,10 +1,13 @@
 package com.adrian.cinemakiosk.appui.pages;
 
+import com.adrian.cinemakiosk.persistence.entity.impl.Movie;
+import com.adrian.cinemakiosk.persistence.repository.impl.MovieRepository;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
+import java.util.List;
 
 public class UserMenuView {
 
@@ -20,10 +23,10 @@ public class UserMenuView {
 
     public void showMenu() throws IOException {
         String[] menuOptions = {
-            "1. Перегляд афіші",
-            "2. Купівля квитків",
-            "3. Мій профіль",
-            "4. Пошук фільмів",
+            "1. Перегляд афіш",
+            "2. Пошук афіш",
+            "3. Поповнити баланс",
+            "4. Купівля квитків",
             "5. Налаштування",
             "6. Вийти"
         };
@@ -81,7 +84,7 @@ public class UserMenuView {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌──────────────────────────┐");
         textGraphics.putString(0, 1, "│                          │");
-        textGraphics.putString(0, 2, "│      " + username + "      │");  // Ім'я користувача
+        textGraphics.putString(0, 2, "      " + username + "      ");  // Ім'я користувача
         textGraphics.putString(0, 3, "│                          │");
         textGraphics.putString(0, 4, "└──────────────────────────┘");
 
@@ -106,26 +109,51 @@ public class UserMenuView {
     private void handleMenuSelection(int selectedIndex) throws IOException {
         switch (selectedIndex) {
             case 0:
-                // Перегляд афіші
+                System.out.println("Перейшли до Афіші");
+
+                // Отримуємо список фільмів
+                MovieRepository movieRepository = new MovieRepository();
+                List<Movie> movieList = movieRepository.getAll();
+
+                // Перевіряємо, чи не порожній список
+                if (movieList.isEmpty()) {
+                    System.out.println("Список фільмів порожній!");
+                } else {
+                    System.out.println("Фільми завантажено.");
+                }
+
+                // Передаємо список фільмів до PosterMenuView
+                PosterMenuView posterMenuView = new PosterMenuView(screen, textGraphics, movieList);
+                posterMenuView.displayPosterMenu();
                 break;
             case 1:
-                // Купівля квитків
+                System.out.println("Перейшли до Пошуку фільмів");
+                MovieRepository searchRepository = new MovieRepository();
+                List<Movie> searchMovieList = searchRepository.getAll();
+                MovieSearchView movieSearchView = new MovieSearchView(screen, textGraphics,
+                    searchMovieList);
+                movieSearchView.displaySearchMenu();
                 break;
             case 2:
+                System.out.println("Перейшли до Мого профілю");
                 // Мій профіль
                 break;
             case 3:
+                System.out.println("Перейшли до Пошуку фільмів");
                 // Пошук фільмів
                 break;
             case 4:
+                System.out.println("Перейшли до Налаштувань");
                 // Налаштування
                 break;
             case 5:
-                // Вийти
+                System.out.println("Вийшли з програми");
                 screen.clear();
                 return;
             default:
                 throw new IllegalStateException("Невідомий вибір: " + selectedIndex);
         }
     }
+
+
 }

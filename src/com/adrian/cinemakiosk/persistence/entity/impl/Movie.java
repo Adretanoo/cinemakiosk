@@ -2,102 +2,63 @@ package com.adrian.cinemakiosk.persistence.entity.impl;
 
 public class Movie {
 
-    private int id;
-    private String title;
-    private String genre;
-    private int duration; // Тривалість у хвилинах
-    private String ageRestriction; // Наприклад, "12+", "16+"
-    private String description;
-    private String director;
-    private String actors;
+    private final int id;
+    private final String title;
+    private final String description;
+    private final int year;
+    private final double rating;
+    private final String posterUrl;
+    private final String genre;
+    private String director; // Додаємо поле "Режисер"
 
-    public Movie(int id, String title, String genre, int duration, String ageRestriction,
-        String description, String director, String actors) {
+    // Конструктор
+    public Movie(int id, String title, String description, int year, double rating,
+        String posterUrl, String genre, String director) {
         this.id = id;
         this.title = title;
-        this.genre = genre;
-        this.duration = duration;
-        this.ageRestriction = ageRestriction;
         this.description = description;
+        this.year = year;
+        this.rating = rating;
+        this.posterUrl = posterUrl;
+        this.genre = genre;
         this.director = director;
-        this.actors = actors;
     }
 
+    // Гетери
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getDescription() {
+        return description;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
     }
 
     public String getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public String getAgeRestriction() {
-        return ageRestriction;
-    }
-
-    public void setAgeRestriction(String ageRestriction) {
-        this.ageRestriction = ageRestriction;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDirector() {
+    public String getDirector() { // Додаємо гетер для режисера
         return director;
     }
 
+    // Сетери (якщо потрібно)
     public void setDirector(String director) {
         this.director = director;
-    }
-
-    public String getActors() {
-        return actors;
-    }
-
-    public void setActors(String actors) {
-        this.actors = actors;
-    }
-
-    @Override
-    public String toString() {
-        return "Movie{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", genre='" + genre + '\'' +
-            ", duration=" + duration +
-            ", ageRestriction='" + ageRestriction + '\'' +
-            ", description='" + description + '\'' +
-            ", director='" + director + '\'' +
-            ", actors='" + actors + '\'' +
-            '}';
     }
 }

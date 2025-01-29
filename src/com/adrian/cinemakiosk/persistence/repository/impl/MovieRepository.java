@@ -23,6 +23,10 @@ public class MovieRepository extends BaseRepository<Movie> {
                 return movie.getTitle().equals(value);
             case "genre":
                 return movie.getGenre().equals(value);
+            case "rating":
+                return movie.getRating() == (Double) value;
+            case "year":
+                return movie.getYear() == (Integer) value;
             default:
                 return false;
         }

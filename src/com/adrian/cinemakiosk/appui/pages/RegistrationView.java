@@ -1,5 +1,6 @@
 package com.adrian.cinemakiosk.appui.pages;
 
+import com.adrian.cinemakiosk.domain.servise.EmailService;
 import com.adrian.cinemakiosk.domain.servise.validators.UserValidator;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
@@ -36,7 +37,7 @@ public class RegistrationView {
             textGraphics.putString(0, 4, "└──────────────────────────┘");
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-            textGraphics.putString(2, 15, "Натисніть ESC, щоб завершити реєстрацію.");
+            textGraphics.putString(2, 18, "Натисніть ESC, щоб завершити реєстрацію.");
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
 
             String username = promptInput("Введіть ім'я користувача:", 6);
@@ -52,13 +53,7 @@ public class RegistrationView {
                 continue;
             }
 
-            String email = null;
-            if (userRepository.existsByEmail(email)) {
-                displayError("Користувач з такою поштою вже існує.", 13);
-                continue;
-            }
-
-            email = promptInput("Введіть електронну пошту:", 8);
+            String email = promptInput("Введіть електронну пошту:", 8);
             if (email == null) {
                 screen.clear();
                 return;
@@ -76,7 +71,16 @@ public class RegistrationView {
                 continue;
             }
 
-            String password = promptPassword("Введіть пароль:", 10);
+            // Відправка коду підтвердження
+            String verificationCode = EmailService.generateAndSendVerificationCode(email);
+
+            // Підтвердження коду
+            if (!promptVerificationCode(verificationCode, 10)) {
+                displayError("Невірний код підтвердження.", 13);
+                continue;
+            }
+
+            String password = promptPassword("Введіть пароль:", 12);
             if (password == null) {
                 screen.clear();
                 return;
@@ -92,7 +96,7 @@ public class RegistrationView {
             // Хешування пароля
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            String role = promptRole("Виберіть роль (admin/user):", 12);
+            String role = promptRole("Виберіть роль (admin/user):", 14);
             if (role == null) {
                 screen.clear();
                 return;
@@ -115,6 +119,39 @@ public class RegistrationView {
             }
         }
     }
+
+    private boolean promptVerificationCode(String verificationCode, int yPos) throws IOException {
+        textGraphics.putString(2, yPos, "Введіть код підтвердження:");
+        screen.refresh();
+
+        StringBuilder input = new StringBuilder();
+        while (true) {
+            var keyStroke = screen.readInput();
+            if (keyStroke.getKeyType() == KeyType.Escape) {
+                return false;
+            }
+            if (keyStroke.getCharacter() != null) {
+                char c = keyStroke.getCharacter();
+                if (c == '\r' || c == '\n') {
+                    break;
+                }
+                if (c == '\b' || c == 127) {
+                    if (input.length() > 0) {
+                        input.deleteCharAt(input.length() - 1);
+                    }
+                } else {
+                    input.append(c);
+                }
+            }
+
+            clearInputArea(yPos);
+            textGraphics.putString(2, yPos + 1, input.toString());
+            screen.refresh();
+        }
+
+        return input.toString().trim().equals(verificationCode);
+    }
+
 
     private String promptInput(String prompt, int yPos) throws IOException {
         textGraphics.putString(2, yPos, prompt);

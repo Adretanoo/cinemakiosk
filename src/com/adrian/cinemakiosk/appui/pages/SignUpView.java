@@ -1,6 +1,5 @@
 package com.adrian.cinemakiosk.appui.pages;
 
-import com.adrian.cinemakiosk.domain.servise.EmailService;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import com.googlecode.lanterna.TextColor;
@@ -15,13 +14,11 @@ public class SignUpView {
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final UserRepository userRepository;
-    private final EmailService mailler;
 
     public SignUpView(Screen screen, TextGraphics textGraphics, UserRepository userRepository) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.userRepository = userRepository;
-        this.mailler = new EmailService();
     }
 
     public void showLoginForm() throws IOException {
@@ -63,19 +60,6 @@ public class SignUpView {
                 continue;
             }
 
-            String verificationCode = EmailService.generateAndSendVerificationCode(email);
-
-            String inputCode = promptInput("Введіть код підтвердження, надісланий на пошту:", 10);
-            if (inputCode == null) {
-                screen.clear();
-                return;
-            }
-
-            if (!verificationCode.equals(inputCode)) {
-                displayError("Невірний код підтвердження.", 13);
-                continue;
-            }
-
             // Авторизація успішна
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
             textGraphics.putString(2, 17,
@@ -84,9 +68,17 @@ public class SignUpView {
             screen.refresh();
             screen.readInput();
 
-            // Перехід до головного меню після авторизації
-            UserMenuView userMenuView = new UserMenuView(screen, textGraphics, user.getUsername());
-            userMenuView.showMenu();
+            // Перевірка ролі користувача і запуск відповідного меню
+            if ("admin".equals(user.getRole())) {
+                AdminMenuView adminMenuView = new AdminMenuView(screen, textGraphics,
+                    user.getUsername());
+                adminMenuView.showMenu();
+            } else if ("user".equals(user.getRole())) {
+                UserMenuView userMenuView = new UserMenuView(screen, textGraphics,
+                    user.getUsername());
+                userMenuView.showMenu();
+            }
+
             return;
         }
     }
