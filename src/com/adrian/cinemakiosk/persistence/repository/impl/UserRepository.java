@@ -1,9 +1,13 @@
 package com.adrian.cinemakiosk.persistence.repository.impl;
 
+
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +17,7 @@ import java.util.List;
 public class UserRepository extends BaseRepository<User> {
 
     private final List<User> users;
+    private FileDescriptor USER_FILE;
 
     public UserRepository() throws IOException {
         super("data/users.json", new TypeToken<List<User>>() {
@@ -113,4 +118,25 @@ public class UserRepository extends BaseRepository<User> {
     private String getFilePath() {
         return "data/users.json";  // Шлях до файлу
     }
+
+    public void update(User user) {
+        try (FileReader reader = new FileReader(USER_FILE)) {
+            Gson gson = new Gson();
+            JsonArray users = gson.fromJson(reader, JsonArray.class);
+
+            for (int i = 0; i < users.size(); i++) {
+                JsonObject obj = users.get(i).getAsJsonObject();
+                if (obj.get("email").getAsString().equals(user.getEmail())) {
+                    obj.addProperty("balance", user.getBalance()); // Оновлюємо баланс
+                }
+            }
+
+            try (FileWriter writer = new FileWriter(USER_FILE)) {
+                gson.toJson(users, writer); // Зберігаємо оновлений файл
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

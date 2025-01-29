@@ -11,6 +11,7 @@ import org.mindrot.bcrypt.BCrypt;
 
 public class SignUpView {
 
+    private static String loggedInUserEmail;
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final UserRepository userRepository;
@@ -75,7 +76,7 @@ public class SignUpView {
                 adminMenuView.showMenu();
             } else if ("user".equals(user.getRole())) {
                 UserMenuView userMenuView = new UserMenuView(screen, textGraphics,
-                    user.getUsername());
+                    user.getUsername(), user.getBalance());
                 userMenuView.showMenu();
             }
 

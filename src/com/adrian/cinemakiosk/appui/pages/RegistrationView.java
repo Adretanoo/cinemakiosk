@@ -37,7 +37,8 @@ public class RegistrationView {
             textGraphics.putString(0, 4, "└──────────────────────────┘");
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-            textGraphics.putString(2, 18, "Натисніть ESC, щоб завершити реєстрацію.");
+            textGraphics.putString(2, 18
+                , "Натисніть ESC, щоб завершити реєстрацію.");
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
 
             String username = promptInput("Введіть ім'я користувача:", 6);

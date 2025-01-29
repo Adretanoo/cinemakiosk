@@ -1,1 +1,1 @@
-[{"username":"adrian","email":"adriantegzza@gmail.com","password":"$2a$10$l6TzgaYCfGw4fil3nlDBCOYT3vuEQyvGUgmNj62PjhWiyXyZ8Ic/i","role":"user","id":1},{"username":"iti","email":"aitishnikua@gmail.com","password":"$2a$10$p39k6TzgjvqKFX.ezxwOF./Ii4qAJtmweRh/gHtdW/kCUrhDIdA92","role":"admin","id":2}]
+[{"id":1,"username":"adrian","email":"adriantegzza@gmail.com","password":"$2a$10$bZj8xUmNa5GhPBUDCJ1ZyelKyfITTwlxyyK8klehRscRBL2cJREde","role":"user","balance":0.0}]

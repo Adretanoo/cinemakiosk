@@ -14,11 +14,13 @@ public class UserMenuView {
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String username;
+    private double balance;
 
-    public UserMenuView(Screen screen, TextGraphics textGraphics, String username) {
+    public UserMenuView(Screen screen, TextGraphics textGraphics, String username, double balance) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.username = username;
+        this.balance = balance;
     }
 
     public void showMenu() throws IOException {
@@ -61,6 +63,7 @@ public class UserMenuView {
         // Виводимо ім'я користувача
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(2, 2, "Користувач: " + username);
+        textGraphics.putString(2, 3, "Баланс: " + balance);
 
         // Виведення опцій меню
         for (int i = 0; i < menuOptions.length; i++) {
@@ -75,7 +78,7 @@ public class UserMenuView {
         // Інструкція по навігації
         String instructions = "Використовуйте ↑/↓ для навігації, Enter для вибору.";
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-        textGraphics.putString(1, 7 + menuOptions.length + 1, instructions);
+        textGraphics.putString(1, 9 + menuOptions.length + 1, instructions);
 
         screen.refresh();
     }
@@ -85,18 +88,19 @@ public class UserMenuView {
         textGraphics.putString(0, 0, "┌──────────────────────────┐");
         textGraphics.putString(0, 1, "│                          │");
         textGraphics.putString(0, 2, "      " + username + "      ");  // Ім'я користувача
-        textGraphics.putString(0, 3, "│                          │");
-        textGraphics.putString(0, 4, "└──────────────────────────┘");
+        textGraphics.putString(0, 3, "       " + balance + "      ");
+        textGraphics.putString(0, 4, "│                          │");
+        textGraphics.putString(0, 5, "└──────────────────────────┘");
 
-        textGraphics.putString(0, 5, "┌──────────────────────────┐");
-        textGraphics.putString(0, 6, "│                          │");
+        textGraphics.putString(0, 6, "┌──────────────────────────┐");
         textGraphics.putString(0, 7, "│                          │");
         textGraphics.putString(0, 8, "│                          │");
         textGraphics.putString(0, 9, "│                          │");
         textGraphics.putString(0, 10, "│                          │");
         textGraphics.putString(0, 11, "│                          │");
         textGraphics.putString(0, 12, "│                          │");
-        textGraphics.putString(0, 13, "└──────────────────────────┘");
+        textGraphics.putString(0, 13, "│                          │");
+        textGraphics.putString(0, 14, "└──────────────────────────┘");
     }
 
     private void highlightOption(String option, int x, int y) {
@@ -135,8 +139,11 @@ public class UserMenuView {
                 movieSearchView.displaySearchMenu();
                 break;
             case 2:
-                System.out.println("Перейшли до Мого профілю");
-                // Мій профіль
+                System.out.println("Поповнення балансу");
+                AddBalanceMenuView addBalanceMenuView = new AddBalanceMenuView(screen, textGraphics,
+                    balance);
+                balance = addBalanceMenuView.showMenu();
+                System.out.println("Новий баланс: " + balance);
                 break;
             case 3:
                 System.out.println("Перейшли до Пошуку фільмів");

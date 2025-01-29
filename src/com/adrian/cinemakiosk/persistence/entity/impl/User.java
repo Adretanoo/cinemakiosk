@@ -2,13 +2,15 @@ package com.adrian.cinemakiosk.persistence.entity.impl;
 
 public class User {
 
+    private int id;
     private String username;
     private String email;
     private String password;
     private String role;
-    private int id;
+    private double balance;
 
     public User() {
+        this.balance = 0.0; // Баланс за замовчуванням
     }
 
     public User(int id, String username, String email, String password, String role) {
@@ -17,6 +19,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.balance = 0.0; // Баланс за замовчуванням
     }
 
     public String getUsername() {
@@ -59,14 +62,36 @@ public class User {
         this.id = id;
     }
 
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void addBalance(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+        }
+    }
+
+    public boolean deductBalance(double amount) {
+        if (amount > 0 && this.balance >= amount) {
+            this.balance -= amount;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-            "username='" + username + '\'' +
+            "id=" + id +
+            ", username='" + username + '\'' +
             ", email='" + email + '\'' +
-            ", password='" + password + '\'' +
             ", role='" + role + '\'' +
-            ", id=" + id +
+            ", balance=" + balance +
             '}';
     }
 }
