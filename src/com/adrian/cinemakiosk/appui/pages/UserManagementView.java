@@ -83,13 +83,25 @@ public class UserManagementView {
     private void showAllUsers() throws IOException {
         screen.clear();
         List<User> users = readUsersFromFile();
-        int row = 1;
+
+        // Заголовок таблиці
+        textGraphics.putString(2, 1, "┌───────┬──────────────────────┐");
+        textGraphics.putString(2, 2, "│  ID   │      Ім'я            │");
+        textGraphics.putString(2, 3, "├───────┼──────────────────────┤");
+
+        // Виведення користувачів
+        int row = 4;
         for (User user : users) {
-            textGraphics.putString(2, row++, "ID: " + user.getId() + " | Ім'я: " + user.getUsername());
+            textGraphics.putString(2, row++, String.format("│ %-5d │ %-18s   │", user.getId(), user.getUsername()));
         }
+
+        // Нижній кінець таблиці
+        textGraphics.putString(2, row, "└───────┴──────────────────────┘");
+
         screen.refresh();
         screen.readInput();
     }
+
 
     private void deleteUserById() throws IOException {
         screen.clear();

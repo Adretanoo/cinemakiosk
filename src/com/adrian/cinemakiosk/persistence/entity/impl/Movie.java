@@ -18,16 +18,15 @@ public class Movie {
     /**
      * Конструктор для створення об'єкта фільму.
      *
-     * @param title заголовок фільму.
+     * @param title       заголовок фільму.
      * @param description опис фільму.
-     * @param year рік випуску фільму.
-     * @param rating рейтинг фільму.
-     * @param posterUrl URL постера фільму.
-     * @param genre жанр фільму.
-     * @param director режисер фільму.
+     * @param year        рік випуску фільму.
+     * @param rating      рейтинг фільму.
+     * @param posterUrl   URL постера фільму.
+     * @param genre       жанр фільму.
      */
     public Movie(String title, String description, int year, double rating,
-        String posterUrl, String genre, String director) {
+        String posterUrl, String genre) {
         this.title = title;
         this.description = description;
         this.year = year;

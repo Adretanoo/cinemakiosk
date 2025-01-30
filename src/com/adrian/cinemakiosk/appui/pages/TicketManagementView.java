@@ -78,50 +78,166 @@ public class TicketManagementView {
         screen.clear();
         List<Ticket> tickets = readTicketsFromFile();
 
-        textGraphics.putString(2, 1, "📜 Список квитків:");
+        int selectedIndex = 0;
+        int startIndex = 0;
+        int itemsPerPage = 10; // Кількість квитків на одній сторінці
 
-        textGraphics.putString(2, 2, "──────────────────────────────────────────────────────────────────────────────────");
+        while (true) {
+            screen.clear();
+            drawTicketsFrame(); // Малюємо рамку для квитків
 
-        if (tickets.isEmpty()) {
-            textGraphics.putString(2, 3, "Немає квитків у системі.");
-        } else {
-            int line = 3;
+            // Вивести квитки на екран
+            for (int i = startIndex; i < Math.min(startIndex + itemsPerPage, tickets.size()); i++) {
+                Ticket ticket = tickets.get(i);
+                textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
+                textGraphics.putString(2, 3 + (i - startIndex), String.format("%-5d %-30s %-10.2f %-12d %-15s",
+                    ticket.getId(),
+                    ticket.getMovie(),
+                    ticket.getPrice(),
+                    ticket.getSeatNumber(),
+                    ticket.getStatus()));
+            }
 
+            screen.refresh();
 
-            textGraphics.putString(2, line++, String.format("%-5s %-30s %-10s %-12s %-15s", "ID", "Фільм", "Ціна", "Місце", "Статус"));
-            textGraphics.putString(2, line++, "──────────────────────────────────────────────────────────────────────────────────");
-
-            for (Ticket ticket : tickets) {
-                textGraphics.putString(2, line++, String.format("%-5d %-30s %-10.2f %-12s %-15s",
-                    ticket.getId(), ticket.getMovie(), ticket.getPrice(), ticket.getSeatNumber(), ticket.getStatus()));
+            // Читання введення користувача
+            KeyStroke keyStroke = screen.readInput();
+            if (keyStroke.getKeyType() == KeyType.Escape) {
+                return;
+            } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
+                if (selectedIndex < Math.min(startIndex + itemsPerPage, tickets.size()) - 1) {
+                    selectedIndex++;
+                } else if (startIndex + itemsPerPage < tickets.size()) {
+                    // Якщо на кінці сторінки, прокручувати вниз
+                    startIndex++;
+                }
+            } else if (keyStroke.getKeyType() == KeyType.ArrowUp) {
+                if (selectedIndex > 0) {
+                    selectedIndex--;
+                } else if (startIndex > 0) {
+                    // Якщо на початку сторінки, прокручувати вгору
+                    startIndex--;
+                }
             }
         }
-
-        screen.refresh();
-        screen.readInput();
     }
+
+    private void drawTicketsFrame() throws IOException {
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        textGraphics.putString(0, 0, "┌───────────────────────────────────────────────────────────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                         Список квитків                                                │");
+        textGraphics.putString(0, 2, "├───────────────────────────────────────────────────────────────────────────────────────┤");
+    }
+
 
 
     private void handleAddTicket() throws IOException {
         screen.clear();
-        textGraphics.putString(2, 1, "Введіть назву фільму: ");
-        String movie = getInput(3);
-        if (movie == null) return;
 
-        textGraphics.putString(2, 5, "Введіть ціну квитка: ");
-        String priceInput = getInput(7);
-        if (priceInput == null) return;
-        double price = Double.parseDouble(priceInput);
+        // Введення назви фільму
+        String movie = null;
+        while (movie == null || movie.trim().isEmpty()) {
+            textGraphics.putString(2, 1, "Введіть назву фільму:                                                                  ");
+            movie = getInput(3);
+            if (movie == null) return;  // Якщо натискається Esc, повертаємось в меню
+            // Очищення попередньої помилки
+            textGraphics.putString(2, 5, " ");  // Очищення попередньої помилки
+            if (movie.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 5, "Помилка: Назва фільму не може бути порожньою!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
-        textGraphics.putString(2, 9, "Введіть номер місця: ");
-        String seatNumberInput = getInput(11);
-        if (seatNumberInput == null) return;
-        int seatNumber = Integer.parseInt(seatNumberInput);
+        // Введення ціни квитка
+        double price = -1;
+        while (price <= 0) {
+            textGraphics.putString(2, 5, "Введіть ціну квитка:                                                   ");
+            String priceInput = getInput(7);
+            if (priceInput == null) return;  // Якщо натискається Esc, повертаємось в меню
+            // Очищення попередньої помилки
+            textGraphics.putString(2, 9, " ");  // Очищення попередньої помилки
+            if (priceInput.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 9, "Помилка: Ціна не може бути порожньою!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+                continue;
+            }
+            try {
+                price = Double.parseDouble(priceInput);
+                if (price <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 9, "Помилка: Введіть коректну ціну (число більше 0)!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
-        textGraphics.putString(2, 13, "Введіть статус (Продано / Доступно): ");
-        String status = getInput(15);
-        if (status == null) return;
+        // Введення номера місця
+        int seatNumber = -1;
+        while (seatNumber <= 0) {
+            textGraphics.putString(2, 9, "Введіть номер місця:                                    ");
+            String seatNumberInput = getInput(11);
+            if (seatNumberInput == null) return;  // Якщо натискається Esc, повертаємось в меню
+            // Очищення попередньої помилки
+            textGraphics.putString(2, 13, " ");  // Очищення попередньої помилки
+            if (seatNumberInput.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 13, "Помилка: Номер місця не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+                continue;
+            }
+            try {
+                seatNumber = Integer.parseInt(seatNumberInput);
+                if (seatNumber <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 13, "Помилка: Введіть коректний номер місця (ціле число більше 0)!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
+        // Введення статусу
+        String status = null;
+        while (status == null || status.trim().isEmpty()) {
+            textGraphics.putString(2, 13, "Введіть статус (Продано / Доступно):                                 ");
+            status = getInput(15);
+            if (status == null) return;  // Якщо натискається Esc, повертаємось в меню
+            // Очищення попередньої помилки
+            textGraphics.putString(2, 17, " ");  // Очищення попередньої помилки
+            if (status.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 17, "Помилка: Статус не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+                continue;
+            }
+            if (!status.equalsIgnoreCase("Продано") && !status.equalsIgnoreCase("Доступно")) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 17, "Помилка: Статус має бути 'Продано' або 'Доступно'!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+                status = null; // Встановлюємо null, щоб повторно запитувати
+            }
+        }
+
+        // Створення та збереження квитка
         Ticket ticket = new Ticket(movie, price);
         ticket.setSeatNumber(seatNumber);
         ticket.setStatus(status);
@@ -132,10 +248,20 @@ public class TicketManagementView {
         tickets.add(ticket);
         saveTicketsToFile(tickets);
 
-        textGraphics.putString(2, 17, "Квиток успішно додано!");
+        textGraphics.putString(2, 17, "Квиток успішно додано!                       ");
         screen.refresh();
         screen.readInput();
     }
+
+
+
+
+
+
+
+
+
+
 
     private void handleRemoveTicket() throws IOException {
         screen.clear();

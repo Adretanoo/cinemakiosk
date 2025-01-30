@@ -58,6 +58,28 @@ public class MovieManagementView {
         }
     }
 
+    private void handleRemoveMovie() throws IOException {
+        screen.clear();
+        textGraphics.putString(2, 1, "Введіть ID фільму для видалення:");
+        String movieIdInput = getInput(3);
+        if (movieIdInput == null) return;
+
+        // Очищення попередніх помилок
+        textGraphics.putString(2, 5, " ");  // Очищення попередньої помилки
+        try {
+            int movieId = Integer.parseInt(movieIdInput);
+            List<Movie> movies = readMoviesFromFile();
+            movies.removeIf(movie -> movie.getId() == movieId);
+            saveMoviesToFile(movies);
+        } catch (NumberFormatException e) {
+            textGraphics.setForegroundColor(TextColor.ANSI.RED);
+            textGraphics.putString(2, 5, "Невірний формат ID! Введіть ціле число.");
+            screen.refresh();
+            screen.readInput();
+            textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+        }
+    }
+
     private void drawMenuFrame() throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌────────────────────────────────┐");
@@ -84,74 +106,135 @@ public class MovieManagementView {
 
     private void handleAddMovie() throws IOException {
         screen.clear();
-        textGraphics.putString(2, 1, "Введіть назву фільму (Esc для виходу): ");
-        String title = getInput(3);
-        if (title == null) return;
 
-        textGraphics.putString(2, 5, "Введіть опис фільму: ");
-        String description = getInput(7);
-        if (description == null) return;
+        // Введення назви фільму
+        String title = null;
+        while (title == null || title.trim().isEmpty()) {
+            textGraphics.putString(2, 1, "Введіть назву фільму (Esc для виходу): ");
+            title = getInput(3);
+            // Очищення попередніх помилок
+            if (title == null) return;
+            textGraphics.putString(2, 5, " ");  // Очищення попередньої помилки
+            if (title == null) return;
+            if (title.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 5, "Помилка: Назва фільму не може бути порожньою!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
-        textGraphics.putString(2, 9, "Введіть рік фільму: ");
-        String year = getInput(11);
-        if (year == null) return;
+        // Введення опису фільму
+        String description = null;
+        while (description == null || description.trim().isEmpty()) {
+            textGraphics.putString(2, 5, "Введіть опис фільму:                                    ");
+            description = getInput(7);
+            // Очищення попередніх помилок
+            if (title == null) return;
+            textGraphics.putString(2, 9, " ");  // Очищення попередньої помилки
+            if (description == null) return;
+            if (description.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 9, "Помилка: Опис фільму не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
-        textGraphics.putString(2, 13, "Введіть жанр фільму: ");
-        String genre = getInput(15);
-        if (genre == null) return;
+        // Введення року фільму
+        String year = null;
+        while (year == null || year.trim().isEmpty()) {
+            textGraphics.putString(2, 9, "Введіть рік фільму:                                   ");
+            year = getInput(11);
+            // Очищення попередніх помилок
+            if (title == null) return;
+            textGraphics.putString(2, 13, " ");  // Очищення попередньої помилки
+            if (year == null) return;
+            if (year.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 13, "Помилка: Рік фільму не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
-        textGraphics.putString(2, 17, "Введіть режисера: ");
-        String director = getInput(19);
-        if (director == null) return;
+        // Введення жанру фільму
+        String genre = null;
+        while (genre == null || genre.trim().isEmpty()) {
+            textGraphics.putString(2, 13, "Введіть жанр фільму:                             ");
+            genre = getInput(15);
+            // Очищення попередніх помилок
+            textGraphics.putString(2, 17, " ");  // Очищення попередньої помилки
+            if (genre == null) return;
+            if (genre.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 17, "Помилка: Жанр фільму не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
 
+        // Введення режисера
+        String director = null;
+        while (director == null || director.trim().isEmpty()) {
+            textGraphics.putString(2, 17, "Введіть режисера:                          ");
+            director = getInput(19);
+            // Очищення попередніх помилок
+            textGraphics.putString(2, 21, " ");  // Очищення попередньої помилки
+            if (director == null) return;
+            if (director.trim().isEmpty()) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
+                textGraphics.putString(2, 21, "Помилка: Режисер не може бути порожнім!");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            }
+        }
+
+        // Введення рейтингу
         double rating = -1;
         while (rating < 0 || rating > 10) {
-            textGraphics.putString(2, 21, "Введіть рейтинг фільму (0-10): ");
+            textGraphics.putString(2, 21, "Введіть рейтинг фільму (0-10):                            ");
             String ratingInput = getInput(23);
+            // Очищення попередніх помилок
+            textGraphics.putString(2, 25, " ");  // Очищення попередньої помилки
             if (ratingInput == null) return;
 
             try {
                 rating = Double.parseDouble(ratingInput);
                 if (rating < 0 || rating > 10) {
+                    textGraphics.setForegroundColor(TextColor.ANSI.RED);
                     textGraphics.putString(2, 25, "Рейтинг повинен бути між 0 і 10.");
+                    screen.refresh();
+                    screen.readInput();
+                    textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
                 }
             } catch (NumberFormatException e) {
+                textGraphics.setForegroundColor(TextColor.ANSI.RED);
                 textGraphics.putString(2, 25, "Невірний формат! Введіть число.");
+                screen.refresh();
+                screen.readInput();
+                textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
             }
-            screen.refresh();
         }
 
-        textGraphics.putString(2, 27, "Введіть URL постеру: ");
-        String posterUrl = getInput(29);
-        if (posterUrl == null) return;
-
-        Movie movie = new Movie(title, description, Integer.parseInt(year), rating, posterUrl, genre, director);
+        // Створення та збереження фільму
+        Movie movie = new Movie(title, description, Integer.parseInt(year), rating,  genre, director);
         List<Movie> movies = readMoviesFromFile();
         int newId = movies.stream().mapToInt(Movie::getId).max().orElse(0) + 1;
         movie.setId(newId);
         movies.add(movie);
         saveMoviesToFile(movies);
 
-        textGraphics.putString(2, 31, "Фільм успішно додано!");
+        textGraphics.putString(2, 31, "Фільм успішно додано!                            ");
         screen.refresh();
         screen.readInput();
     }
 
-    private void handleRemoveMovie() throws IOException {
-        screen.clear();
-        textGraphics.putString(2, 1, "Введіть ID фільму для видалення:");
-        String movieIdInput = getInput(3);
-        if (movieIdInput == null) return;
-
-        try {
-            int movieId = Integer.parseInt(movieIdInput);
-            List<Movie> movies = readMoviesFromFile();
-            movies.removeIf(movie -> movie.getId() == movieId);
-            saveMoviesToFile(movies);
-        } catch (NumberFormatException e) {
-            return;
-        }
-    }
 
     private void handleViewMovies() throws IOException {
         screen.clear();

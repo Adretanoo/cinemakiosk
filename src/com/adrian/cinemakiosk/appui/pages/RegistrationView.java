@@ -154,6 +154,7 @@ public class RegistrationView {
     }
 
 
+
     private String promptInput(String prompt, int yPos) throws IOException {
         textGraphics.putString(2, yPos, prompt);
         screen.refresh();
