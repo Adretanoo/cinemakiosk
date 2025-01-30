@@ -71,9 +71,7 @@ public class AdminMenuView {
     }
 
     private void handleTicketManagement() throws IOException {
-        // Реалізуйте управління квитками
-        textGraphics.putString(2, 15, "Управління квитками не реалізовано.");
-        screen.refresh();
-        screen.readInput();
+        TicketManagementView ticketManagementView = new TicketManagementView(screen,textGraphics);
+        ticketManagementView.showMenu();
     }
 }

@@ -24,7 +24,7 @@ public class MovieManagementView {
     }
 
     public void showMenu() throws IOException {
-        String[] menuOptions = {"1. Додати фільм", "2. Видалити фільм", "3. Повернутися до меню"};
+        String[] menuOptions = {"1. Додати фільм", "2. Видалити фільм", "3. Переглянути фільми", "4. Повернутися до меню"};
         int selectedIndex = 0;
 
         while (true) {
@@ -33,13 +33,14 @@ public class MovieManagementView {
             screen.refresh();
             var keyStroke = screen.readInput();
 
-            if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 2) {
+            if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 3) {
                 return;
             }
             if (keyStroke.getKeyType() == KeyType.Enter) {
                 switch (selectedIndex) {
                     case 0 -> handleAddMovie();
                     case 1 -> handleRemoveMovie();
+                    case 2 -> handleViewMovies();
                 }
             }
             if (keyStroke.getKeyType() == KeyType.ArrowUp) {
@@ -190,4 +191,23 @@ public class MovieManagementView {
             textGraphics.putString(2, i + 1, menuOptions[i]);
         }
     }
+    private void handleViewMovies() throws IOException {
+        screen.clear();
+        List<Movie> movies = readMoviesFromFile();
+        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+        textGraphics.putString(2, 1, "🎬 Список фільмів:");
+
+        if (movies.isEmpty()) {
+            textGraphics.putString(2, 3, "❌ Немає доступних фільмів.");
+        } else {
+            int line = 3;
+            for (Movie movie : movies) {
+                textGraphics.putString(2, line++, "ID: " + movie.getId() + " | Назва: " + movie.getTitle() + " | Жанр: " + movie.getGenre());
+            }
+        }
+
+        screen.refresh();
+        screen.readInput();
+    }
+
 }

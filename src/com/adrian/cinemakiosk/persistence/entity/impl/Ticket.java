@@ -28,6 +28,10 @@ public class Ticket {
         this.time = time;
     }
 
+    public Ticket(String movie, double price){
+        this.movie = movie;
+        this.price = price;
+    }
     @Override
     public String toString() {
         return "Ticket{" +
