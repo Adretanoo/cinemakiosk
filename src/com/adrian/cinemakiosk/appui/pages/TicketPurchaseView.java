@@ -4,12 +4,16 @@ import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.adrian.cinemakiosk.persistence.repository.impl.TicketRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class TicketPurchaseView {
@@ -17,8 +21,6 @@ public class TicketPurchaseView {
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final User user;
-    private final TicketRepository ticketRepository;
-    private final UserRepository userRepository;
     private List<Ticket> availableTickets;
     private int selectedIndex = 0;
 
@@ -27,9 +29,19 @@ public class TicketPurchaseView {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.user = user;
-        this.ticketRepository = ticketRepository;
-        this.userRepository = userRepository;
-        this.availableTickets = ticketRepository.getAvailableTickets();
+        this.availableTickets = loadTicketsFromJson("data/tickets.json");
+    }
+
+    private List<Ticket> loadTicketsFromJson(String filePath) {
+        try {
+            Gson gson = new Gson();
+            FileReader reader = new FileReader(filePath);
+            Type ticketListType = new TypeToken<List<Ticket>>(){}.getType();
+            return gson.fromJson(reader, ticketListType);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of(); // Повертаємо порожній список в разі помилки
+        }
     }
 
     public void showPurchaseMenu() throws IOException {
@@ -55,16 +67,20 @@ public class TicketPurchaseView {
         textGraphics.putString(2, 2, "Баланс: " + user.getBalance());
         textGraphics.putString(2, 3, "Оберіть квиток:");
 
+        // Заголовки таблиці
+        String header = String.format("%-4s %-10s %-12s %-10s", "№", "Ціна", "Тип", "Статус");
+        textGraphics.putString(2, 5, header);
+
         for (int i = 0; i < availableTickets.size(); i++) {
             Ticket ticket = availableTickets.get(i);
-            String ticketInfo = String.format("%d. Ціна: %.2f | Тип: %s | Статус: %s",
-                i + 1, ticket.getPrice(), ticket.getTicketType(), ticket.getStatus());
+            String ticketInfo = String.format("%-4d %-10.2f %-12s %-10s", i + 1, ticket.getPrice(), ticket.getTicketType(), ticket.getStatus());
+
             if (i == selectedIndex) {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-                textGraphics.putString(2, 5 + i, "❯ " + ticketInfo);
+                textGraphics.putString(2, 6 + i, "❯ " + ticketInfo);
             } else {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-                textGraphics.putString(4, 5 + i, ticketInfo);
+                textGraphics.putString(4, 6 + i, ticketInfo);
             }
         }
 
@@ -87,8 +103,8 @@ public class TicketPurchaseView {
         ticket.setOrderId(user.getId());
 
         // Оновлюємо базу даних
-        userRepository.updateUser(user);
-        ticketRepository.updateTicket(ticket);
+        // userRepository.updateUser(user);
+        // ticketRepository.updateTicket(ticket);
 
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
         textGraphics.putString(2, 10, "Квиток успішно придбано!");

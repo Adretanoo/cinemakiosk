@@ -7,7 +7,6 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
 public class AdminMenuView {
-
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String username;
@@ -22,44 +21,26 @@ public class AdminMenuView {
         String[] menuOptions = {
             "1. Управління фільмами",
             "2. Управління користувачами",
-            "3. Огляд статистики",
-            "4. Управління квитками",
-            "5. Вийти"
+            "3. Управління квитками",
+            "4. Вийти"
         };
-
-        int selectedIndex = 0; // Початково вибраний пункт меню
+        int selectedIndex = 0;
 
         while (true) {
             screen.clear();
-            drawMenuFrame();
             renderMenu(menuOptions, selectedIndex);
-
             var keyStroke = screen.readInput();
-            if (keyStroke.getKeyType() == KeyType.Escape) {
-                break; // Вихід з меню
-            }
 
+            if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 3) {
+                return; // Повернення в попереднє меню
+            }
             if (keyStroke.getKeyType() == KeyType.Enter) {
-                // Обробка вибору
-                if (selectedIndex == 0) {
-                    // Управління фільмами
-                    handleMovieManagement();
-                } else if (selectedIndex == 1) {
-                    // Управління користувачами
-                    handleUserManagement();
-                } else if (selectedIndex == 2) {
-                    // Огляд статистики
-                    handleStatisticsReview();
-                } else if (selectedIndex == 3) {
-                    // Управління квитками
-                    handleTicketManagement();
-                } else if (selectedIndex == 4) {
-                    // Вихід
-                    break;
+                switch (selectedIndex) {
+                    case 0 -> handleMovieManagement();
+                    case 1 -> handleUserManagement();
+                    case 2 -> handleTicketManagement();
                 }
             }
-
-            // Навігація по меню
             if (keyStroke.getKeyType() == KeyType.ArrowUp) {
                 selectedIndex = (selectedIndex - 1 + menuOptions.length) % menuOptions.length;
             } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
@@ -68,72 +49,30 @@ public class AdminMenuView {
         }
     }
 
-    private void drawMenuFrame() {
-        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-        textGraphics.putString(0, 0, "┌────────────────────────────────┐");
-        textGraphics.putString(0, 1, "│                                │");
-        textGraphics.putString(0, 2, "       Admin: " + username + "     ");
-        textGraphics.putString(0, 3, "│                                │");
-        textGraphics.putString(0, 4, "└────────────────────────────────┘");
-
-        textGraphics.putString(0, 5, "┌────────────────────────────────┐");
-        textGraphics.putString(0, 6, "│                                │");
-        textGraphics.putString(0, 7, "│                                │");
-        textGraphics.putString(0, 8, "│                                │");
-        textGraphics.putString(0, 9, "│                                │");
-        textGraphics.putString(0, 10, "│                                │");
-        textGraphics.putString(0, 11, "│                                │");
-        textGraphics.putString(0, 12, "│                                │");
-        textGraphics.putString(0, 13, "└────────────────────────────────┘");
-    }
-
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
+        screen.clear();
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
+        textGraphics.putString(2, 1, "🔧 Адмін-меню: " + username);
         for (int i = 0; i < menuOptions.length; i++) {
-            if (i == selectedIndex) {
-                highlightOption(menuOptions[i], 2, 7 + i);
-            } else {
-                textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-                textGraphics.putString(4, 7 + i, menuOptions[i]);
-            }
+            textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
+            textGraphics.putString(2, 3 + i, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
         }
-
-        String instructions = "Використовуйте ↑/↓ для навігації, Enter для вибору.";
-        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-        textGraphics.putString(1, 6 + menuOptions.length + 5, instructions);
         screen.refresh();
-    }
-
-    private void highlightOption(String option, int x, int y) {
-        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-        textGraphics.putString(x, y, "❯ ");
-        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-        textGraphics.putString(x + 2, y, option);
     }
 
     private void handleMovieManagement() throws IOException {
-        // Обробка управління фільмами
-        textGraphics.putString(2, 17, "Обробка управління фільмами...");
-        screen.refresh();
-        screen.readInput();
+        MovieManagementView movieManagementView = new MovieManagementView(screen, textGraphics);
+        movieManagementView.showMenu();
     }
 
     private void handleUserManagement() throws IOException {
-        // Обробка управління користувачами
-        textGraphics.putString(2, 17, "Обробка управління користувачами...");
-        screen.refresh();
-        screen.readInput();
-    }
-
-    private void handleStatisticsReview() throws IOException {
-        // Обробка огляду статистики
-        textGraphics.putString(2, 17, "Обробка огляду статистики...");
-        screen.refresh();
-        screen.readInput();
+        UserManagementView userManagementView = new UserManagementView(screen, textGraphics);
+        userManagementView.showMenu();  // Викликаємо метод showMenu() для UserManagementView
     }
 
     private void handleTicketManagement() throws IOException {
-        // Обробка управління квитками
-        textGraphics.putString(2, 17, "Обробка управління квитками...");
+        // Реалізуйте управління квитками
+        textGraphics.putString(2, 15, "Управління квитками не реалізовано.");
         screen.refresh();
         screen.readInput();
     }

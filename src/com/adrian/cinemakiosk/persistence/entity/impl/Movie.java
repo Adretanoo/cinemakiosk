@@ -1,17 +1,16 @@
 package com.adrian.cinemakiosk.persistence.entity.impl;
 
 public class Movie {
+    private int id;
+    private String title;
+    private String description;
+    private int year;
+    private double rating;
+    private String posterUrl;
+    private String genre;
+    private String director;
 
-    private final int id;
-    private final String title;
-    private final String description;
-    private final int year;
-    private final double rating;
-    private final String posterUrl;
-    private final String genre;
-    private String director; // Додаємо поле "Режисер"
-
-    // Конструктор
+    // Конструктор з ID
     public Movie(int id, String title, String description, int year, double rating,
         String posterUrl, String genre, String director) {
         this.id = id;
@@ -24,9 +23,25 @@ public class Movie {
         this.director = director;
     }
 
-    // Гетери
+    // Конструктор без ID (для випадку, коли ID буде генеруватися окремо)
+    public Movie(String title, String description, int year, double rating,
+        String posterUrl, String genre, String director) {
+        this.title = title;
+        this.description = description;
+        this.year = year;
+        this.rating = rating;
+        this.posterUrl = posterUrl;
+        this.genre = genre;
+        this.director = director;
+    }
+
+    // Геттери і сеттери
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -53,12 +68,7 @@ public class Movie {
         return genre;
     }
 
-    public String getDirector() { // Додаємо гетер для режисера
+    public String getDirector() {
         return director;
-    }
-
-    // Сетери (якщо потрібно)
-    public void setDirector(String director) {
-        this.director = director;
     }
 }

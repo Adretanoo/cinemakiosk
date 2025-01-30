@@ -1,5 +1,6 @@
 package com.adrian.cinemakiosk.persistence.repository.impl;
 
+import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
 import com.adrian.cinemakiosk.persistence.entity.impl.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -122,4 +123,12 @@ public class UserRepository extends BaseRepository<User> {
     }
 
 
+    public List<Ticket> getUserTickets(String email) {
+        User user = findByEmail(email);
+        if (user != null) {
+            return user.getTickets();
+        } else {
+            return new ArrayList<>();
+        }
+    }
 }

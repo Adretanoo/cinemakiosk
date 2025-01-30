@@ -1,5 +1,7 @@
 package com.adrian.cinemakiosk.persistence.entity.impl;
 
+import java.util.List;
+
 public class User {
 
     private int id;
@@ -8,6 +10,7 @@ public class User {
     private String password;
     private String role;
     private double balance;
+    private List<Ticket> tickets;
 
     public User() {
         this.balance = 0.0; // Баланс за замовчуванням
@@ -19,9 +22,12 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.balance = 0.0; // Баланс за замовчуванням
+        this.balance = 0.0;
     }
 
+    public User (List<Ticket> tickets){
+        this.tickets = tickets;
+    }
     public String getUsername() {
         return username;
     }
@@ -32,6 +38,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
     }
 
     public void setEmail(String email) {
