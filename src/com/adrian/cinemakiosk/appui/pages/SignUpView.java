@@ -55,13 +55,11 @@ public class SignUpView {
                 return;
             }
 
-            // Перевірка паролю
             if (!BCrypt.checkpw(password, user.getPassword())) {
                 displayError("Невірний пароль.", 13);
                 continue;
             }
 
-            // Авторизація успішна
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
             textGraphics.putString(2, 17,
                 "Авторизація успішна! Натисніть будь-яку клавішу для продовження.");

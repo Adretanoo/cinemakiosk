@@ -72,25 +72,21 @@ public class UserMenuView {
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         screen.clear();
 
-        // Малюємо рамку
         drawMenuFrame();
 
-        // Виводимо ім'я користувача
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(2, 2, "Користувач: " + username);
         textGraphics.putString(2, 3, "Баланс: " + balance);
 
-        // Виведення опцій меню
         for (int i = 0; i < menuOptions.length; i++) {
             if (i == selectedIndex) {
-                highlightOption(menuOptions[i], 2, 7 + i);  // Виділяємо вибраний пункт
+                highlightOption(menuOptions[i], 2, 7 + i);
             } else {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
                 textGraphics.putString(4, 7 + i, menuOptions[i]);
             }
         }
 
-        // Інструкція по навігації
         String instructions = "Використовуйте ↑/↓ для навігації, Enter для вибору.";
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
         textGraphics.putString(1, 9 + menuOptions.length + 1, instructions);
@@ -99,22 +95,18 @@ public class UserMenuView {
     }
 
     private void drawMenuFrame() throws IOException {
-        // Очищаємо область для старого балансу
         textGraphics.putString(0, 3, "                        "); // Очищаємо попередній баланс
 
-        // Виводимо рамку меню
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌──────────────────────────┐");
         textGraphics.putString(0, 1, "│                          │");
         textGraphics.putString(0, 2, "      " + username + "      ");  // Ім'я користувача
 
-        // Виводимо оновлений баланс
         textGraphics.putString(0, 3, "       " + balance + "      ");
 
         textGraphics.putString(0, 4, "│                          │");
         textGraphics.putString(0, 5, "└──────────────────────────┘");
 
-        // Виведення іншого вмісту меню
         textGraphics.putString(0, 6, "┌──────────────────────────┐");
         textGraphics.putString(0, 7, "│                          │");
         textGraphics.putString(0, 8, "│                          │");
@@ -125,7 +117,6 @@ public class UserMenuView {
         textGraphics.putString(0, 13, "│                          │");
         textGraphics.putString(0, 14, "└──────────────────────────┘");
 
-        // Оновлюємо екран
         screen.refresh();
     }
 
@@ -177,7 +168,7 @@ public class UserMenuView {
             case 3:
 
                 TicketRepository ticketRepository = new TicketRepository();
-                List<Ticket> availableTickets = ticketRepository.getAvailableTickets(); // Отримуємо доступні квитки
+                List<Ticket> availableTickets = ticketRepository.getAvailableTickets();
                 currentUser = userRepository.findByEmail(email);
                 TicketPurchaseView ticketPurchaseView = new TicketPurchaseView(screen, textGraphics, currentUser, ticketRepository, userRepository);
                 ticketPurchaseView.showPurchaseMenu();

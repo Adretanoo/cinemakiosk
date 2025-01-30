@@ -16,13 +16,11 @@ public class AboutUsView {
     }
 
     public void showAboutUs() throws IOException {
-        screen.clear(); // Очищаємо екран перед відображенням нового контенту
+        screen.clear();
         drawAboutUsFrame();
 
-        // Встановлюємо білий колір для основного тексту
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
 
-        // Текст інформації про програму
         textGraphics.putString(2, 6,
             "Це кіоск самообслуговування для оформлення замовлень у кінотеатрі.");
         textGraphics.putString(2, 7, "Програма дозволяє користувачам вибирати фільми,");
@@ -33,13 +31,12 @@ public class AboutUsView {
         textGraphics.putString(2, 12,
             "та зручного вибору фільмів через інтерфейс самообслуговування.");
 
-        // Інструкції для навігації
         String instructions = "Використовуйте довільну клавішу для повернення в меню.";
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-        textGraphics.putString(1, 14, instructions); // Інструкції для навігації
+        textGraphics.putString(1, 14, instructions);
 
-        screen.refresh(); // Оновлюємо екран
-        screen.readInput(); // Очікуємо натискання клавіші для повернення
+        screen.refresh();
+        screen.readInput();
     }
 
 

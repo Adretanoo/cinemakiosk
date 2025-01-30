@@ -36,46 +36,38 @@ public class AddBalanceMenuView {
             renderMenu(); // Намалювати меню
             var keyStroke = screen.readInput();
 
-            // Якщо натиснута клавіша ESC, оновлюємо баланс і виходимо
             if (keyStroke.getKeyType() == KeyType.Escape) {
-                userRepository.updateBalance(currentUser.getEmail(), balance); // Оновлюємо баланс у репозиторії
-                return balance; // Виходимо з меню
+                userRepository.updateBalance(currentUser.getEmail(), balance);
+                return balance;
             }
 
-            // Якщо натиснута клавіша Backspace - видаляємо останній символ
             else if (keyStroke.getKeyType() == KeyType.Backspace && !inputAmount.isEmpty()) {
                 inputAmount = inputAmount.substring(0, inputAmount.length() - 1);
             }
 
-            // Якщо натиснута клавіша Enter, перевіряємо введену суму
             else if (keyStroke.getKeyType() == KeyType.Enter) {
                 try {
-                    double amount = Double.parseDouble(inputAmount); // Перетворюємо введену суму в число
-                    if (amount != 0 && balance + amount >= 0) { // Перевірка, чи коректна сума
-                        balance += amount; // Оновлюємо баланс
-                        inputAmount = ""; // Очищаємо введену суму
-                        userRepository.updateBalance(currentUser.getEmail(), balance); // Оновлюємо баланс у репозиторії
+                    double amount = Double.parseDouble(inputAmount);
+                    if (amount != 0 && balance + amount >= 0) {
+                        balance += amount;
+                        inputAmount = "";
+                        userRepository.updateBalance(currentUser.getEmail(), balance);
 
-                        // Очищаємо область для відображення балансу
-                        textGraphics.putString(2, 3, "                        "); // Очищаємо попередній баланс
+                        textGraphics.putString(2, 3, "                        ");
 
-                        // Виводимо новий баланс
                         textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
                         textGraphics.putString(2, 3, "Поточний баланс: " + balance + " грн");
 
-                        // Оновлюємо екран
                         screen.refresh();
                     }
                 } catch (NumberFormatException e) {
-                    // Якщо введене значення не є числом
                     inputAmount = "";
                     textGraphics.setForegroundColor(TextColor.Factory.fromString("#FF0000"));
                     textGraphics.putString(2, 4, "Помилка: введіть число.");
-                    screen.refresh(); // Оновлюємо екран
+                    screen.refresh();
                 }
             }
 
-            // Якщо натиснута клавіша для введення числа або мінуса
             else if (keyStroke.getCharacter() != null && (
                 Character.isDigit(keyStroke.getCharacter()) || keyStroke.getCharacter() == '-')) {
                 inputAmount += keyStroke.getCharacter();

@@ -10,17 +10,6 @@ public class Movie {
     private String genre;
     private String director;
 
-    public Movie(int id, String title, String description, int year, double rating,
-        String posterUrl, String genre, String director) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.year = year;
-        this.rating = rating;
-        this.posterUrl = posterUrl;
-        this.genre = genre;
-        this.director = director;
-    }
 
     public Movie(String title, String description, int year, double rating,
         String posterUrl, String genre, String director) {

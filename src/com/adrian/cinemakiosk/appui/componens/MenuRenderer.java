@@ -21,10 +21,10 @@ public class MenuRenderer {
 
         for (int i = 0; i < menuOptions.length; i++) {
             if (i == selectedIndex) {
-                highlightOption(menuOptions[i], 2, 7 + i); // Зміщення пунктів меню трохи нижче
+                highlightOption(menuOptions[i], 2, 7 + i);
             } else {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-                textGraphics.putString(4, 7 + i, menuOptions[i]); // Теж зрушуємо вниз
+                textGraphics.putString(4, 7 + i, menuOptions[i]);
             }
         }
 

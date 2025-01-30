@@ -77,10 +77,8 @@ public class TicketManagementView {
         screen.clear();
         List<Ticket> tickets = readTicketsFromFile();
 
-        // Заголовок
         textGraphics.putString(2, 1, "📜 Список квитків:");
 
-        // Додамо горизонтальну лінію
         textGraphics.putString(2, 2, "──────────────────────────────────────────────────────────────────────────────────");
 
         if (tickets.isEmpty()) {
@@ -88,11 +86,10 @@ public class TicketManagementView {
         } else {
             int line = 3;
 
-            // Заголовок таблиці
+
             textGraphics.putString(2, line++, String.format("%-5s %-30s %-10s %-12s %-15s", "ID", "Фільм", "Ціна", "Місце", "Статус"));
             textGraphics.putString(2, line++, "──────────────────────────────────────────────────────────────────────────────────");
 
-            // Виведення квитків
             for (Ticket ticket : tickets) {
                 textGraphics.putString(2, line++, String.format("%-5d %-30s %-10.2f %-12s %-15s",
                     ticket.getId(), ticket.getMovie(), ticket.getPrice(), ticket.getSeatNumber(), ticket.getStatus()));
