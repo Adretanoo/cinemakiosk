@@ -1,0 +1,12 @@
+com.adrian.cinemakiosk
+com.adrian.cinemakiosk.appui
+com.adrian.cinemakiosk.appui.componens
+com.adrian.cinemakiosk.appui.pages
+com.adrian.cinemakiosk.domain.servise
+com.adrian.cinemakiosk.domain.servise.uow
+com.adrian.cinemakiosk.domain.servise.validators
+com.adrian.cinemakiosk.domain.session
+com.adrian.cinemakiosk.domain.util
+com.adrian.cinemakiosk.persistence.entity.impl
+com.adrian.cinemakiosk.persistence.repository
+com.adrian.cinemakiosk.persistence.repository.impl
