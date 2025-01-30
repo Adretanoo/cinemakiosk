@@ -72,10 +72,7 @@ public class AdminMenuView {
             case 0 -> handleMovieManagement();
             case 1 -> handleUserManagement();
             case 2 -> handleTicketManagement();
-            case 3 -> {
-                screen.stopScreen();
-                System.exit(0);
-            }
+            case 3 -> new MenuView(screen,textGraphics).showMainMenu();
             default -> throw new IllegalStateException("Невідомий вибір: " + selectedIndex);
         }
     }

@@ -17,7 +17,7 @@ public class Main {
             ScreenSaverView screenSaverView = new ScreenSaverView(screen, textGraphics);
 
             screenSaverView.showGreeting();
-            MenuView menuHandler = new MenuView(screen, textGraphics, userRepository);
+            MenuView menuHandler = new MenuView(screen, textGraphics);
             menuHandler.showMainMenu();
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package com.adrian.cinemakiosk.appui.pages;
 import com.adrian.cinemakiosk.persistence.entity.impl.Movie;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.google.gson.Gson;
@@ -155,28 +156,87 @@ public class MovieManagementView {
     private void handleViewMovies() throws IOException {
         screen.clear();
         List<Movie> movies = readMoviesFromFile();
-        textGraphics.putString(2, 1, "Список фільмів:");
-        int line = 3;
-        for (Movie movie : movies) {
-            textGraphics.putString(2, line++, movie.getId() + ". " + movie.getTitle());
+
+        int selectedIndex = 0;
+        int startIndex = 0;
+        int itemsPerPage = 10; // Кількість фільмів на одній сторінці
+
+        while (true) {
+            screen.clear();
+            drawMoviesFrame(); // Малюємо рамку для фільмів
+
+            // Вивести фільми на екран
+            for (int i = startIndex; i < Math.min(startIndex + itemsPerPage, movies.size()); i++) {
+                Movie movie = movies.get(i);
+                textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
+                textGraphics.putString(2, 3 + (i - startIndex), String.format("%-5d %-30s %-5d %-10.1f %-15s",
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getYear(),
+                    movie.getRating(),
+                    movie.getGenre()));
+            }
+
+            screen.refresh();
+
+            // Читання введення користувача
+            KeyStroke keyStroke = screen.readInput();
+            if (keyStroke.getKeyType() == KeyType.Escape) {
+                return;
+            } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
+                if (selectedIndex < Math.min(startIndex + itemsPerPage, movies.size()) - 1) {
+                    selectedIndex++;
+                } else if (startIndex + itemsPerPage < movies.size()) {
+                    // Якщо на кінці сторінки, прокручувати вниз
+                    startIndex++;
+                }
+            } else if (keyStroke.getKeyType() == KeyType.ArrowUp) {
+                if (selectedIndex > 0) {
+                    selectedIndex--;
+                } else if (startIndex > 0) {
+                    // Якщо на початку сторінки, прокручувати вгору
+                    startIndex--;
+                }
+            }
         }
-        screen.refresh();
-        screen.readInput();
     }
+
+    private void drawMoviesFrame() throws IOException {
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        textGraphics.putString(0, 0, "┌───────────────────────────────────────────────────────────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                         Список фільмів                                                │");
+        textGraphics.putString(0, 2, "├───────────────────────────────────────────────────────────────────────────────────────┤");
+
+    }
+
+
+
+
+
 
     private String getInput(int inputLine) throws IOException {
         StringBuilder input = new StringBuilder();
-        screen.refresh();
+
         while (true) {
-            var keyStroke = screen.readInput();
-            if (keyStroke.getKeyType() == KeyType.Escape) return null;
-            if (keyStroke.getKeyType() == KeyType.Enter) return input.toString().trim();
-            if (keyStroke.getKeyType() == KeyType.Backspace && input.length() > 0) input.deleteCharAt(input.length() - 1);
-            if (keyStroke.getCharacter() != null) input.append(keyStroke.getCharacter());
             textGraphics.putString(2, inputLine, input.toString() + " ");
             screen.refresh();
+
+            KeyStroke keyStroke = screen.readInput();
+
+            if (keyStroke.getKeyType() == KeyType.Enter) {
+                return input.toString().trim();
+            } else if (keyStroke.getKeyType() == KeyType.Backspace) {
+                if (input.length() > 0) {
+                    input.deleteCharAt(input.length() - 1);
+                }
+            } else if (keyStroke.getKeyType() == KeyType.Escape) {
+                return null;
+            } else if (keyStroke.getCharacter() != null) {
+                input.append(keyStroke.getCharacter());
+            }
         }
     }
+
 
     private List<Movie> readMoviesFromFile() throws IOException {
         Gson gson = new Gson();

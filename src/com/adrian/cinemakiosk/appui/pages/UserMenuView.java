@@ -178,8 +178,7 @@ public class UserMenuView {
                 new MyTicketView(screen, textGraphics).showTickets();
                 break;
             case 5:
-                screen.stopScreen();
-                System.exit(0);
+                new MenuView(screen,textGraphics).showMainMenu();
                 break;
 
             default:

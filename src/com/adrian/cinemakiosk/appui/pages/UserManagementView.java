@@ -147,7 +147,6 @@ public class UserManagementView {
                 input.append(keyStroke.getCharacter());
             }
 
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.putString(2, inputLine, input.toString() + " ");
             screen.refresh();
         }

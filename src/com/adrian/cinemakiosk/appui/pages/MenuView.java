@@ -15,7 +15,7 @@ public class MenuView {
     private final MenuRenderer menuRenderer;
     private final MenuInputHandler inputHandler;
 
-    public MenuView(Screen screen, TextGraphics textGraphics, UserRepository userRepository) {
+    public MenuView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.menuRenderer = new MenuRenderer(textGraphics, screen);

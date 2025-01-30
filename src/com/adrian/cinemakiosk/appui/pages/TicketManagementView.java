@@ -3,6 +3,7 @@ package com.adrian.cinemakiosk.appui.pages;
 import com.adrian.cinemakiosk.persistence.entity.impl.Ticket;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.google.gson.Gson;
@@ -158,26 +159,28 @@ public class TicketManagementView {
 
     private String getInput(int inputLine) throws IOException {
         StringBuilder input = new StringBuilder();
-        screen.refresh();
-        while (true) {
-            var keyStroke = screen.readInput();
 
-            if (keyStroke.getKeyType() == KeyType.Escape) {
-                return null;
-            }
+        while (true) {
+            textGraphics.putString(2, inputLine, input.toString() + " "); // Додаємо пробіл, щоб затирати символи
+            screen.refresh();
+
+            KeyStroke keyStroke = screen.readInput();
 
             if (keyStroke.getKeyType() == KeyType.Enter) {
                 return input.toString().trim();
-            } else if (keyStroke.getKeyType() == KeyType.Backspace && input.length() > 0) {
-                input.deleteCharAt(input.length() - 1);
+            } else if (keyStroke.getKeyType() == KeyType.Backspace) {
+                if (input.length() > 0) {
+                    input.deleteCharAt(input.length() - 1);
+                }
+            } else if (keyStroke.getKeyType() == KeyType.Escape) {
+                return null;
             } else if (keyStroke.getCharacter() != null) {
                 input.append(keyStroke.getCharacter());
             }
-
-            textGraphics.putString(2, inputLine, input.toString() + " ");
-            screen.refresh();
         }
     }
+
+
 
     private List<Ticket> readTicketsFromFile() throws IOException {
         Gson gson = new Gson();
