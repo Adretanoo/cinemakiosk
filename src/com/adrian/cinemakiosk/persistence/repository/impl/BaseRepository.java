@@ -72,9 +72,9 @@ abstract class BaseRepository<T> implements Repository<T> {
         return new ArrayList<>(cache);
     }
 
-    // Інтегрований метод для отримання елементів
+
     public List<T> getItems() {
-        return getAll();  // Використовуємо вже існуючий метод getAll
+        return getAll();
     }
 
     @Override

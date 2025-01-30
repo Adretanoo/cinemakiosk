@@ -40,7 +40,7 @@ public class MyTicketView {
 
         int row = 4;
         for (Ticket ticket : userTickets) {
-            String ticketInfo = String.format("Квиток ID: %d | Фільм: %s | Ціна: %.2f | Статус: %s",
+            String ticketInfo = String.format("Квиток ID: %d | Фільм: %s | Ціна: %.2f | Час: %s",
                 ticket.getId(), ticket.getMovie(), ticket.getPrice(), ticket.getStatus());
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));  // Зелений колір для тексту

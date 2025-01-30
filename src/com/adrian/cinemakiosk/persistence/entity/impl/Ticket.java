@@ -9,9 +9,9 @@ public class Ticket {
     private int sessionId;
     private int seatNumber;
     private int quantity;
-    private int orderId;  // New field to store the order ID
-    private String movie; // New field for movie name
-    private String time;  // New field for movie time
+    private int orderId;
+    private String movie;
+    private String time;
 
     // Constructor with the new fields
     public Ticket(int id, double price, String status, String ticketType, int sessionId,
@@ -48,7 +48,6 @@ public class Ticket {
             '}';
     }
 
-    // Getters and setters for the new fields
     public int getOrderId() {
         return orderId;
     }

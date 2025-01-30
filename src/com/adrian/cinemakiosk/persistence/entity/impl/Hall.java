@@ -3,8 +3,8 @@ package com.adrian.cinemakiosk.persistence.entity.impl;
 public class Hall {
 
     private int id;
-    private String name; // Назва залу
-    private int seatCapacity; // Кількість місць
+    private String name;
+    private int seatCapacity;
 
     public Hall(int id, String name, int seatCapacity) {
         this.id = id;

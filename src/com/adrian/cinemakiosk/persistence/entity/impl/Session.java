@@ -5,11 +5,11 @@ import java.util.List;
 public class Session {
 
     private int id;
-    private String dateTime; // Дата і час проведення
-    private String format; // Наприклад, "2D", "3D", "IMAX"
-    private int movieId; // Foreign Key до Movie
-    private int hallId; // Foreign Key до Hall
-    private List<Seat> seats; // Додано список місць
+    private String dateTime;
+    private String format;
+    private int movieId;
+    private int hallId;
+    private List<Seat> seats;
 
     public Session(int id, String dateTime, String format, int movieId, int hallId, List<Seat> seats) {
         this.id = id;
@@ -61,11 +61,11 @@ public class Session {
     }
 
     public List<Seat> getSeats() {
-        return seats;  // Додано метод для отримання місць
+        return seats;
     }
 
     public void setSeats(List<Seat> seats) {
-        this.seats = seats;  // Додано метод для встановлення місць
+        this.seats = seats;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Session {
             ", format='" + format + '\'' +
             ", movieId=" + movieId +
             ", hallId=" + hallId +
-            ", seats=" + seats +  // Додано виведення місць
+            ", seats=" + seats +
             '}';
     }
 }

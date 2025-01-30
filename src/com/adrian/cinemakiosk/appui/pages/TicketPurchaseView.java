@@ -63,29 +63,50 @@ public class TicketPurchaseView {
 
     private void renderMenu() throws IOException {
         screen.clear();
+
+        // Виведення балансу
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(2, 2, "Баланс: " + user.getBalance());
+
+        // Заголовок
         textGraphics.putString(2, 3, "Оберіть квиток:");
 
-        // Заголовки таблиці
-        String header = String.format("%-4s %-10s %-12s %-10s", "№", "Ціна", "Тип", "Статус");
+        // Заголовки таблиці з акцентами
+        String header = String.format("%-4s %-12s %-20s %-12s", "№", "Ціна", "Фільм", "Час");
         textGraphics.putString(2, 5, header);
 
-        for (int i = 0; i < availableTickets.size(); i++) {
+        // Роздільна лінія для таблиці
+        textGraphics.putString(2, 6, "───────────────────────────────────────────────────────────────");
+
+        // Виведення інформації про доступні квитки
+        int startIndex = selectedIndex; // Стартовий індекс для відображення
+        int endIndex = Math.min(startIndex + 10, availableTickets.size()); // Відображаємо 10 квитків на екран
+
+        for (int i = startIndex; i < endIndex; i++) {
             Ticket ticket = availableTickets.get(i);
-            String ticketInfo = String.format("%-4d %-10.2f %-12s %-10s", i + 1, ticket.getPrice(), ticket.getTicketType(), ticket.getStatus());
+            String ticketInfo = String.format("%-4d %-12.2f %-20s %-12s", i + 1, ticket.getPrice(), ticket.getMovie(), ticket.getTime());
 
             if (i == selectedIndex) {
+                // Виділення вибраного квитка
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-                textGraphics.putString(2, 6 + i, "❯ " + ticketInfo);
+                textGraphics.putString(2, 7 + (i - startIndex), "❯ " + ticketInfo);
             } else {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-                textGraphics.putString(4, 6 + i, ticketInfo);
+                textGraphics.putString(4, 7 + (i - startIndex), ticketInfo);
             }
+        }
+
+        // Роздільна лінія після списку квитків
+        textGraphics.putString(2, 7 + (endIndex - startIndex), "───────────────────────────────────────────────────────────────");
+
+        // Показуємо індекс сторінки або ще кілька інструкцій, якщо потрібно
+        if (availableTickets.size() > 10) {
+            textGraphics.putString(2, 9 + (endIndex - startIndex), "Використовуйте ↑↓ для прокручування.");
         }
 
         screen.refresh();
     }
+
 
     private void purchaseTicket(int index) throws IOException {
         if (index >= availableTickets.size()) return;

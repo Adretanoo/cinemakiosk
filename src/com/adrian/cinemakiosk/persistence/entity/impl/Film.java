@@ -8,7 +8,6 @@ public class Film {
     private String description;
     private int releaseYear;
 
-    // Конструктор
     public Film(String title, String genre, double rating, String description, int releaseYear) {
         this.title = title;
         this.genre = genre;
@@ -17,7 +16,6 @@ public class Film {
         this.releaseYear = releaseYear;
     }
 
-    // Геттери та сеттери
     public String getTitle() {
         return title;
     }
@@ -58,7 +56,7 @@ public class Film {
         this.releaseYear = releaseYear;
     }
 
-    // Метод для виведення інформації про фільм
+
     @Override
     public String toString() {
         return "Фільм: " + title + "\nЖанр: " + genre + "\nРейтинг: " + rating + "\nОпис: "

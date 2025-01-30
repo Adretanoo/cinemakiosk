@@ -55,13 +55,10 @@ public class UserRepository extends BaseRepository<User> {
     }
 
     public void save(User user) {
-        // Перевірка наявності користувача
         if (existsByEmail(user.getEmail())) {
             System.out.println("Користувач з такою поштою вже існує.");
             return;
         }
-
-        // Генерація нового ID
         int newId = users.isEmpty() ? 1 : users.stream().mapToInt(User::getId).max().orElse(0) + 1;
         user.setId(newId);
         users.add(user);
@@ -89,7 +86,7 @@ public class UserRepository extends BaseRepository<User> {
         User user = findByEmail(email);
         if (user != null) {
             user.setBalance(newBalance);
-            save(user); // Тут потрібно реалізувати збереження в базу або JSON
+            save(user);
         }
     }
 
@@ -101,20 +98,19 @@ public class UserRepository extends BaseRepository<User> {
         }
     }
     public User getUserByEmail(String email) {
-        // Логіка для пошуку користувача за email (наприклад, з файлу або бази даних)
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 return user;
             }
         }
-        return null;  // Якщо користувача не знайдено
+        return null;
     }
 
     public void updateUser(User updatedUser) {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getEmail().equals(updatedUser.getEmail())) {
-                users.set(i, updatedUser);  // Оновлюємо користувача в списку
-                saveToFile();  // Зберігаємо оновлені дані в файл
+                users.set(i, updatedUser);
+                saveToFile();
                 System.out.println("Дані користувача оновлено: " + updatedUser);
                 return;
             }

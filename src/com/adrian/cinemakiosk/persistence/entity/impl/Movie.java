@@ -10,7 +10,6 @@ public class Movie {
     private String genre;
     private String director;
 
-    // Конструктор з ID
     public Movie(int id, String title, String description, int year, double rating,
         String posterUrl, String genre, String director) {
         this.id = id;
@@ -23,7 +22,6 @@ public class Movie {
         this.director = director;
     }
 
-    // Конструктор без ID (для випадку, коли ID буде генеруватися окремо)
     public Movie(String title, String description, int year, double rating,
         String posterUrl, String genre, String director) {
         this.title = title;
@@ -35,7 +33,6 @@ public class Movie {
         this.director = director;
     }
 
-    // Геттери і сеттери
     public int getId() {
         return id;
     }
