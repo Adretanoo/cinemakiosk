@@ -28,36 +28,56 @@ public class AdminMenuView {
 
         while (true) {
             screen.clear();
+            drawMenuFrame();
             renderMenu(menuOptions, selectedIndex);
             var keyStroke = screen.readInput();
 
-            if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 3) {
-                return; // Повернення в попереднє меню
-            }
             if (keyStroke.getKeyType() == KeyType.Enter) {
-                switch (selectedIndex) {
-                    case 0 -> handleMovieManagement();
-                    case 1 -> handleUserManagement();
-                    case 2 -> handleTicketManagement();
-                }
+                handleMenuSelection(selectedIndex);
             }
             if (keyStroke.getKeyType() == KeyType.ArrowUp) {
-                selectedIndex = (selectedIndex - 1 + menuOptions.length) % menuOptions.length;
+                selectedIndex = (selectedIndex - 1 + (menuOptions.length - 1)) % (menuOptions.length - 1);
             } else if (keyStroke.getKeyType() == KeyType.ArrowDown) {
                 selectedIndex = (selectedIndex + 1) % menuOptions.length;
             }
         }
     }
 
+    private void drawMenuFrame() throws IOException {
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        textGraphics.putString(0, 0, "┌────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                                │");
+        textGraphics.putString(0, 2, "        Admin: " + username + "   ");
+        textGraphics.putString(0, 3, "├────────────────────────────────┤");
+        textGraphics.putString(0, 4, "│                                │");
+        textGraphics.putString(0, 5, "│                                │");
+        textGraphics.putString(0, 6, "│                                │");
+        textGraphics.putString(0, 7, "│                                │");
+        textGraphics.putString(0, 8, "│                                │");
+        textGraphics.putString(0, 9, "│                                │");
+        textGraphics.putString(0, 10, "└────────────────────────────────┘");
+        screen.refresh();
+    }
+
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
-        screen.clear();
-        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-        textGraphics.putString(2, 1, "🔧 Адмін-меню: " + username);
         for (int i = 0; i < menuOptions.length; i++) {
             textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
-            textGraphics.putString(2, 3 + i, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
+            textGraphics.putString(2, 5 + i, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
         }
         screen.refresh();
+    }
+
+    private void handleMenuSelection(int selectedIndex) throws IOException {
+        switch (selectedIndex) {
+            case 0 -> handleMovieManagement();
+            case 1 -> handleUserManagement();
+            case 2 -> handleTicketManagement();
+            case 3 -> {
+                screen.stopScreen();
+                System.exit(0);
+            }
+            default -> throw new IllegalStateException("Невідомий вибір: " + selectedIndex);
+        }
     }
 
     private void handleMovieManagement() throws IOException {
@@ -67,11 +87,11 @@ public class AdminMenuView {
 
     private void handleUserManagement() throws IOException {
         UserManagementView userManagementView = new UserManagementView(screen, textGraphics);
-        userManagementView.showMenu();  // Викликаємо метод showMenu() для UserManagementView
+        userManagementView.showMenu();
     }
 
     private void handleTicketManagement() throws IOException {
-        TicketManagementView ticketManagementView = new TicketManagementView(screen,textGraphics);
+        TicketManagementView ticketManagementView = new TicketManagementView(screen, textGraphics);
         ticketManagementView.showMenu();
     }
 }

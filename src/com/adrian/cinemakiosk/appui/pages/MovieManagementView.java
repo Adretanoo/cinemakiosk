@@ -10,10 +10,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieManagementView {
-
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String movieFilePath = "data/movies.json";
@@ -24,16 +24,21 @@ public class MovieManagementView {
     }
 
     public void showMenu() throws IOException {
-        String[] menuOptions = {"1. Додати фільм", "2. Видалити фільм", "3. Переглянути фільми", "4. Повернутися до меню"};
+        String[] menuOptions = {
+            "1. Додати фільм",
+            "2. Видалити фільм",
+            "3. Переглянути фільми",
+            "4. Повернутися"
+        };
         int selectedIndex = 0;
 
         while (true) {
             screen.clear();
+            drawMenuFrame();
             renderMenu(menuOptions, selectedIndex);
-            screen.refresh();
             var keyStroke = screen.readInput();
 
-            if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 3) {
+            if (keyStroke.getKeyType() == KeyType.Escape) {
                 return;
             }
             if (keyStroke.getKeyType() == KeyType.Enter) {
@@ -41,6 +46,7 @@ public class MovieManagementView {
                     case 0 -> handleAddMovie();
                     case 1 -> handleRemoveMovie();
                     case 2 -> handleViewMovies();
+                    case 3 -> { return; }
                 }
             }
             if (keyStroke.getKeyType() == KeyType.ArrowUp) {
@@ -51,33 +57,32 @@ public class MovieManagementView {
         }
     }
 
-    private String getInput(int inputLine) throws IOException {
-        StringBuilder input = new StringBuilder();
+    private void drawMenuFrame() throws IOException {
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        textGraphics.putString(0, 0, "┌────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                                │");
+        textGraphics.putString(0, 2, "       Управління фільмами      ");
+        textGraphics.putString(0, 3, "├────────────────────────────────┤");
+        textGraphics.putString(0, 4, "│                                │");
+        textGraphics.putString(0, 5, "│                                │");
+        textGraphics.putString(0, 6, "│                                │");
+        textGraphics.putString(0, 7, "│                                │");
+        textGraphics.putString(0, 8, "│                                │");
+        textGraphics.putString(0, 9, "│                                │");
+        textGraphics.putString(0, 10, "└────────────────────────────────┘");
         screen.refresh();
-        while (true) {
-            var keyStroke = screen.readInput();
+    }
 
-            if (keyStroke.getKeyType() == KeyType.Escape) {
-                return null;
-            }
-
-            if (keyStroke.getKeyType() == KeyType.Enter) {
-                return input.toString().trim();
-            } else if (keyStroke.getKeyType() == KeyType.Backspace && input.length() > 0) {
-                input.deleteCharAt(input.length() - 1);
-            } else if (keyStroke.getCharacter() != null && keyStroke.getCharacter() != '\u0008') {
-                input.append(keyStroke.getCharacter());
-            }
-
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE); // Білий колір для тексту
-            textGraphics.putString(2, inputLine, input.toString() + " ");
-            screen.refresh();
+    private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
+        for (int i = 0; i < menuOptions.length; i++) {
+            textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
+            textGraphics.putString(2, 4 + i, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
         }
+        screen.refresh();
     }
 
     private void handleAddMovie() throws IOException {
         screen.clear();
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE); // Білий колір для тексту
         textGraphics.putString(2, 1, "Введіть назву фільму (Esc для виходу): ");
         String title = getInput(3);
         if (title == null) return;
@@ -107,10 +112,10 @@ public class MovieManagementView {
             try {
                 rating = Double.parseDouble(ratingInput);
                 if (rating < 0 || rating > 10) {
-                    textGraphics.putString(2, 25, "❌ Рейтинг повинен бути між 0 і 10.");
+                    textGraphics.putString(2, 25, "Рейтинг повинен бути між 0 і 10.");
                 }
             } catch (NumberFormatException e) {
-                textGraphics.putString(2, 25, "❌ Невірний формат! Введіть число.");
+                textGraphics.putString(2, 25, "Невірний формат! Введіть число.");
             }
             screen.refresh();
         }
@@ -126,42 +131,51 @@ public class MovieManagementView {
         movies.add(movie);
         saveMoviesToFile(movies);
 
-        textGraphics.putString(2, 31, "✅ Фільм успішно додано!");
+        textGraphics.putString(2, 31, "Фільм успішно додано!");
         screen.refresh();
         screen.readInput();
     }
 
     private void handleRemoveMovie() throws IOException {
         screen.clear();
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE); // Білий колір для тексту
-        textGraphics.putString(2, 1, "Введіть ID фільму для видалення (Esc для виходу): ");
+        textGraphics.putString(2, 1, "Введіть ID фільму для видалення:");
         String movieIdInput = getInput(3);
-        if (movieIdInput == null) return;  // Вихід при натисканні Esc
+        if (movieIdInput == null) return;
 
         try {
             int movieId = Integer.parseInt(movieIdInput);
             List<Movie> movies = readMoviesFromFile();
-            Movie movieToRemove = movies.stream()
-                .filter(movie -> movie.getId() == movieId)
-                .findFirst()
-                .orElse(null);
-
-            if (movieToRemove != null) {
-                movies.remove(movieToRemove);
-                saveMoviesToFile(movies);
-                textGraphics.setForegroundColor(TextColor.ANSI.YELLOW); // Жовтий колір для успішного повідомлення
-                textGraphics.putString(2, 5, "✅ Фільм успішно видалено!");
-            } else {
-                textGraphics.setForegroundColor(TextColor.ANSI.YELLOW); // Жовтий колір для повідомлення про помилку
-                textGraphics.putString(2, 5, "❌ Фільм з таким ID не знайдено.");
-            }
+            movies.removeIf(movie -> movie.getId() == movieId);
+            saveMoviesToFile(movies);
         } catch (NumberFormatException e) {
-            textGraphics.setForegroundColor(TextColor.ANSI.YELLOW); // Жовтий колір для повідомлення про помилку
-            textGraphics.putString(2, 5, "❌ Невірний формат ID!");
+            return;
         }
+    }
 
+    private void handleViewMovies() throws IOException {
+        screen.clear();
+        List<Movie> movies = readMoviesFromFile();
+        textGraphics.putString(2, 1, "Список фільмів:");
+        int line = 3;
+        for (Movie movie : movies) {
+            textGraphics.putString(2, line++, movie.getId() + ". " + movie.getTitle());
+        }
         screen.refresh();
         screen.readInput();
+    }
+
+    private String getInput(int inputLine) throws IOException {
+        StringBuilder input = new StringBuilder();
+        screen.refresh();
+        while (true) {
+            var keyStroke = screen.readInput();
+            if (keyStroke.getKeyType() == KeyType.Escape) return null;
+            if (keyStroke.getKeyType() == KeyType.Enter) return input.toString().trim();
+            if (keyStroke.getKeyType() == KeyType.Backspace && input.length() > 0) input.deleteCharAt(input.length() - 1);
+            if (keyStroke.getCharacter() != null) input.append(keyStroke.getCharacter());
+            textGraphics.putString(2, inputLine, input.toString() + " ");
+            screen.refresh();
+        }
     }
 
     private List<Movie> readMoviesFromFile() throws IOException {
@@ -170,7 +184,7 @@ public class MovieManagementView {
         try (Reader reader = new FileReader(movieFilePath)) {
             return gson.fromJson(reader, movieListType);
         } catch (FileNotFoundException e) {
-            return List.of();
+            return new ArrayList<>();
         }
     }
 
@@ -180,34 +194,4 @@ public class MovieManagementView {
             gson.toJson(movies, writer);
         }
     }
-
-    private void renderMenu(String[] menuOptions, int selectedIndex) {
-        for (int i = 0; i < menuOptions.length; i++) {
-            if (i == selectedIndex) {
-                textGraphics.setForegroundColor(TextColor.ANSI.YELLOW);
-            } else {
-                textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-            }
-            textGraphics.putString(2, i + 1, menuOptions[i]);
-        }
-    }
-    private void handleViewMovies() throws IOException {
-        screen.clear();
-        List<Movie> movies = readMoviesFromFile();
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-        textGraphics.putString(2, 1, "🎬 Список фільмів:");
-
-        if (movies.isEmpty()) {
-            textGraphics.putString(2, 3, "❌ Немає доступних фільмів.");
-        } else {
-            int line = 3;
-            for (Movie movie : movies) {
-                textGraphics.putString(2, line++, "ID: " + movie.getId() + " | Назва: " + movie.getTitle() + " | Жанр: " + movie.getGenre());
-            }
-        }
-
-        screen.refresh();
-        screen.readInput();
-    }
-
 }

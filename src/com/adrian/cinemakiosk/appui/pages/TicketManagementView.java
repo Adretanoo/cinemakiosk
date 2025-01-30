@@ -28,8 +28,8 @@ public class TicketManagementView {
 
         while (true) {
             screen.clear();
+            drawMenuFrame();
             renderMenu(menuOptions, selectedIndex);
-            screen.refresh();
             var keyStroke = screen.readInput();
 
             if (keyStroke.getKeyType() == KeyType.Escape || selectedIndex == 3) {
@@ -50,18 +50,52 @@ public class TicketManagementView {
         }
     }
 
+    private void drawMenuFrame() throws IOException {
+        textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        textGraphics.putString(0, 0, "┌────────────────────────────────┐");
+        textGraphics.putString(0, 1, "│                                │");
+        textGraphics.putString(0, 2, "        Управління квитками      ");
+        textGraphics.putString(0, 3, "├────────────────────────────────┤");
+        textGraphics.putString(0, 4, "│                                │");
+        textGraphics.putString(0, 5, "│                                │");
+        textGraphics.putString(0, 6, "│                                │");
+        textGraphics.putString(0, 7, "│                                │");
+        textGraphics.putString(0, 8, "│                                │");
+        textGraphics.putString(0, 9, "│                                │");
+        textGraphics.putString(0, 10, "└────────────────────────────────┘");
+        screen.refresh();
+    }
+
+    private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
+        for (int i = 0; i < menuOptions.length; i++) {
+            textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
+            textGraphics.putString(2, 4 + i, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
+        }
+        screen.refresh();
+    }
     private void handleViewTickets() throws IOException {
         screen.clear();
         List<Ticket> tickets = readTicketsFromFile();
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+
+        // Заголовок
         textGraphics.putString(2, 1, "📜 Список квитків:");
 
+        // Додамо горизонтальну лінію
+        textGraphics.putString(2, 2, "──────────────────────────────────────────────────────────────────────────────────");
+
         if (tickets.isEmpty()) {
-            textGraphics.putString(2, 3, "❌ Немає квитків у системі.");
+            textGraphics.putString(2, 3, "Немає квитків у системі.");
         } else {
             int line = 3;
+
+            // Заголовок таблиці
+            textGraphics.putString(2, line++, String.format("%-5s %-30s %-10s %-12s %-15s", "ID", "Фільм", "Ціна", "Місце", "Статус"));
+            textGraphics.putString(2, line++, "──────────────────────────────────────────────────────────────────────────────────");
+
+            // Виведення квитків
             for (Ticket ticket : tickets) {
-                textGraphics.putString(2, line++, "ID: " + ticket.getId() + " | Фільм: " + ticket.getMovie() + " | Ціна: " + ticket.getPrice() + " | Місце: " + ticket.getSeatNumber() + " | Статус: " + ticket.getStatus());
+                textGraphics.putString(2, line++, String.format("%-5d %-30s %-10.2f %-12s %-15s",
+                    ticket.getId(), ticket.getMovie(), ticket.getPrice(), ticket.getSeatNumber(), ticket.getStatus()));
             }
         }
 
@@ -69,9 +103,9 @@ public class TicketManagementView {
         screen.readInput();
     }
 
+
     private void handleAddTicket() throws IOException {
         screen.clear();
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
         textGraphics.putString(2, 1, "Введіть назву фільму: ");
         String movie = getInput(3);
         if (movie == null) return;
@@ -100,7 +134,7 @@ public class TicketManagementView {
         tickets.add(ticket);
         saveTicketsToFile(tickets);
 
-        textGraphics.putString(2, 17, "✅ Квиток успішно додано!");
+        textGraphics.putString(2, 17, "Квиток успішно додано!");
         screen.refresh();
         screen.readInput();
     }
@@ -116,9 +150,9 @@ public class TicketManagementView {
             List<Ticket> tickets = readTicketsFromFile();
             tickets.removeIf(ticket -> ticket.getId() == ticketId);
             saveTicketsToFile(tickets);
-            textGraphics.putString(2, 5, "✅ Квиток успішно видалено!");
+            textGraphics.putString(2, 5, "Квиток успішно видалено!");
         } catch (NumberFormatException e) {
-            textGraphics.putString(2, 5, "❌ Невірний формат ID!");
+            textGraphics.putString(2, 5, "Невірний формат ID!");
         }
 
         screen.refresh();
@@ -165,10 +199,5 @@ public class TicketManagementView {
         }
     }
 
-    private void renderMenu(String[] menuOptions, int selectedIndex) {
-        for (int i = 0; i < menuOptions.length; i++) {
-            textGraphics.setForegroundColor(i == selectedIndex ? TextColor.ANSI.YELLOW : TextColor.ANSI.WHITE);
-            textGraphics.putString(2, i + 1, (i == selectedIndex ? "❯ " : "  ") + menuOptions[i]);
-        }
-    }
+
 }
