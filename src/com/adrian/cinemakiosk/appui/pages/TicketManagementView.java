@@ -13,16 +13,32 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.List;
 
+/**
+ * Клас для керування квитками в користувацькому інтерфейсі.
+ * Це меню дозволяє додавати, видаляти та переглядати квитки.
+ */
 public class TicketManagementView {
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String ticketFilePath = "data/tickets.json";
 
+    /**
+     * Конструктор класу.
+     *
+     * @param screen екран для малювання інтерфейсу
+     * @param textGraphics графіка для малювання тексту на екрані
+     */
     public TicketManagementView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
     }
 
+    /**
+     * Показує головне меню для керування квитками.
+     * Меню містить опції для додавання, видалення та перегляду квитків.
+     *
+     * @throws IOException якщо виникає помилка при вводу/виводу
+     */
     public void showMenu() throws IOException {
         String[] menuOptions = {"1. Додати квиток", "2. Видалити квиток", "3. Переглянути квитки", "4. Повернутися до меню"};
         int selectedIndex = 0;
@@ -51,6 +67,11 @@ public class TicketManagementView {
         }
     }
 
+    /**
+     * Малює рамку для меню.
+     *
+     * @throws IOException якщо виникає помилка при вводу/виводу
+     */
     private void drawMenuFrame() throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌────────────────────────────────┐");
@@ -67,6 +88,13 @@ public class TicketManagementView {
         screen.refresh();
     }
 
+    /**
+     * Виводить список меню з можливістю вибору.
+     *
+     * @param menuOptions варіанти меню
+     * @param selectedIndex індекс вибраного варіанту
+     * @throws IOException якщо виникає помилка при вводу/виводу
+     */
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         for (int i = 0; i < menuOptions.length; i++) {
             textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
@@ -74,6 +102,13 @@ public class TicketManagementView {
         }
         screen.refresh();
     }
+
+    /**
+     * Обробляє додавання нового квитка.
+     * Запитує користувача про деталі квитка і додає його до файлу.
+     *
+     * @throws IOException якщо виникає помилка при вводу/виводу
+     */
     private void handleViewTickets() throws IOException {
         screen.clear();
         List<Ticket> tickets = readTicketsFromFile();
@@ -252,16 +287,6 @@ public class TicketManagementView {
         screen.refresh();
         screen.readInput();
     }
-
-
-
-
-
-
-
-
-
-
 
     private void handleRemoveTicket() throws IOException {
         screen.clear();

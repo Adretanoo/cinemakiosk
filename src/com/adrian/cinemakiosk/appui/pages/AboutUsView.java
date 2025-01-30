@@ -5,16 +5,32 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
+/**
+ * Клас, що відповідає за відображення сторінки "Про програму" в інтерфейсі кіоску.
+ * Цей клас надає інформацію про призначення програми та її функціональність.
+ */
 public class AboutUsView {
 
     private final Screen screen;
     private final TextGraphics textGraphics;
 
+    /**
+     * Конструктор для ініціалізації AboutUsView з об'єктами Screen та TextGraphics.
+     *
+     * @param screen екран для відображення вмісту.
+     * @param textGraphics об'єкт для малювання тексту на екрані.
+     */
     public AboutUsView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
     }
 
+    /**
+     * Відображає інформацію про програму та її призначення.
+     * Після відображення екрану користувач може повернутися в головне меню.
+     *
+     * @throws IOException якщо виникне помилка при відображенні екрану або читанні введених даних.
+     */
     public void showAboutUs() throws IOException {
         screen.clear();
         drawAboutUsFrame();
@@ -39,7 +55,9 @@ public class AboutUsView {
         screen.readInput();
     }
 
-
+    /**
+     * Малює рамку для сторінки "Про програму" з титульним рядком.
+     */
     private void drawAboutUsFrame() {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌──────────────────────────┐");

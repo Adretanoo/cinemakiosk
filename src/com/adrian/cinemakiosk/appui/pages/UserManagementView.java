@@ -13,17 +13,33 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Iterator;
 
+/**
+ * Клас для управління користувачами у системі.
+ * Він дозволяє переглядати список користувачів, видаляти користувачів за ID та повертатися до головного меню.
+ */
 public class UserManagementView {
 
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String userFilePath = "data/users.json";
 
+    /**
+     * Конструктор для ініціалізації екрану та графічного контексту.
+     *
+     * @param screen         екран для відображення
+     * @param textGraphics   графічний контекст для малювання на екрані
+     */
     public UserManagementView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
     }
 
+    /**
+     * Відображає головне меню для управління користувачами з трьома опціями:
+     * перегляд користувачів, видалення користувача, повернення до головного меню.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     public void showMenu() throws IOException {
         String[] menuOptions = {
             "1. Переглянути користувачів",
@@ -56,6 +72,11 @@ public class UserManagementView {
         }
     }
 
+    /**
+     * Малює рамку меню для управління користувачами.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void drawMenuFrame() throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌────────────────────────────────┐");
@@ -72,6 +93,13 @@ public class UserManagementView {
         screen.refresh();
     }
 
+    /**
+     * Відображає меню з опціями для управління користувачами.
+     *
+     * @param menuOptions список опцій меню
+     * @param selectedIndex індекс вибраної опції
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         for (int i = 0; i < menuOptions.length; i++) {
             textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
@@ -80,6 +108,12 @@ public class UserManagementView {
         screen.refresh();
     }
 
+    /**
+     * Виводить список усіх користувачів з файлу.
+     * Якщо користувачів немає, виводить повідомлення про відсутність даних.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void showAllUsers() throws IOException {
         screen.clear();
         List<User> users = readUsersFromFile();
@@ -102,7 +136,12 @@ public class UserManagementView {
         screen.readInput();
     }
 
-
+    /**
+     * Видаляє користувача за його ID.
+     * Якщо користувач не знайдений, виводить відповідне повідомлення.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void deleteUserById() throws IOException {
         screen.clear();
         textGraphics.putString(2, 1, "Введіть ID користувача для видалення (Esc для виходу): ");
@@ -141,6 +180,13 @@ public class UserManagementView {
         screen.readInput();
     }
 
+    /**
+     * Отримує введення від користувача для певної опції.
+     *
+     * @param inputLine рядок, на якому буде відображатися введення
+     * @return введення користувача
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private String getInput(int inputLine) throws IOException {
         StringBuilder input = new StringBuilder();
         screen.refresh();
@@ -163,6 +209,12 @@ public class UserManagementView {
             screen.refresh();
         }
     }
+    /**
+     * Читає список користувачів з файлу.
+     *
+     * @return список користувачів
+     * @throws IOException в разі помилки при читанні з файлу
+     */
     private List<User> readUsersFromFile() throws IOException {
         Gson gson = new Gson();
         Type userListType = new TypeToken<List<User>>(){}.getType();
@@ -173,6 +225,12 @@ public class UserManagementView {
         }
     }
 
+    /**
+     * Зберігає список користувачів до файлу.
+     *
+     * @param users список користувачів для збереження
+     * @throws IOException в разі помилки при записі у файл
+     */
     private void saveUsersToFile(List<User> users) throws IOException {
         Gson gson = new Gson();
         try (Writer writer = new FileWriter(userFilePath)) {

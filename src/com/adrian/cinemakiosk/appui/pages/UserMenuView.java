@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Клас для відображення меню користувача в терміналі.
+ * Забезпечує функціональність навігації між різними пунктами меню користувача.
+ */
 public class UserMenuView {
 
     private final Screen screen;
@@ -28,6 +32,16 @@ public class UserMenuView {
     private String email;
     private static final String FILE_PATH = "data/tickets.json";
 
+    /**
+     * Конструктор для ініціалізації екземпляра меню користувача.
+     *
+     * @param screen           екземпляр екрану для відображення тексту.
+     * @param textGraphics     екземпляр графічного тексту для відображення.
+     * @param username         ім'я користувача.
+     * @param email            електронна адреса користувача.
+     * @param balance          баланс користувача.
+     * @param userRepository   репозиторій для доступу до користувачів.
+     */
     public UserMenuView(Screen screen, TextGraphics textGraphics, String username,
         String email, double balance, UserRepository userRepository) {
         this.screen = screen;
@@ -38,6 +52,11 @@ public class UserMenuView {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Відображає меню користувача та обробляє вибір користувача.
+     *
+     * @throws IOException Якщо виникає помилка при відображенні на екрані.
+     */
     public void showMenu() throws IOException {
         String[] menuOptions = {
             "1. Перегляд афіш",
@@ -69,6 +88,14 @@ public class UserMenuView {
         }
     }
 
+
+    /**
+     * Відображає пункти меню на екрані.
+     *
+     * @param menuOptions     масив рядків з пунктами меню.
+     * @param selectedIndex   індекс вибраного пункту меню.
+     * @throws IOException    Якщо виникає помилка при відображенні на екрані.
+     */
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         screen.clear();
 
@@ -94,6 +121,11 @@ public class UserMenuView {
         screen.refresh();
     }
 
+    /**
+     * Малює рамку меню.
+     *
+     * @throws IOException Якщо виникає помилка при відображенні на екрані.
+     */
     private void drawMenuFrame() throws IOException {
         textGraphics.putString(0, 3, "                        "); // Очищаємо попередній баланс
 
@@ -120,6 +152,13 @@ public class UserMenuView {
         screen.refresh();
     }
 
+    /**
+     * Виділяє вибраний пункт меню жовтим кольором.
+     *
+     * @param option   вибраний пункт меню.
+     * @param x        координата по осі X для відображення.
+     * @param y        координата по осі Y для відображення.
+     */
     private void highlightOption(String option, int x, int y) {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
         textGraphics.putString(x, y, "❯ ");
@@ -127,6 +166,12 @@ public class UserMenuView {
         textGraphics.putString(x + 2, y, option);
     }
 
+    /**
+     * Обробляє вибір пункту меню та викликає відповідні методи для кожної опції.
+     *
+     * @param selectedIndex індекс вибраного пункту меню.
+     * @throws IOException Якщо виникає помилка при обробці вибору.
+     */
     private void handleMenuSelection(int selectedIndex) throws IOException {
         switch (selectedIndex) {
             case 0:

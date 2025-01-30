@@ -5,16 +5,33 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
+/**
+ * Клас, що відповідає за візуальне відображення меню на екрані.
+ * Меню складається з кількох опцій, одна з яких виділяється при навігації.
+ */
 public class MenuRenderer {
 
     private final TextGraphics textGraphics;
     private final Screen screen;
 
+    /**
+     * Конструктор для ініціалізації MenuRenderer з об'єктами TextGraphics і Screen.
+     *
+     * @param textGraphics об'єкт для малювання тексту на екрані.
+     * @param screen об'єкт екрана для відображення вмісту.
+     */
     public MenuRenderer(TextGraphics textGraphics, Screen screen) {
         this.textGraphics = textGraphics;
         this.screen = screen;
     }
 
+    /**
+     * Відображає меню з кількома опціями, підсвічуючи вибрану опцію.
+     *
+     * @param menuOptions масив рядків, що містить опції меню.
+     * @param selectedIndex індекс вибраної опції.
+     * @throws IOException якщо виникне помилка при оновленні екрану.
+     */
     public void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         clearScreen();
         drawMenuFrame();
@@ -35,10 +52,18 @@ public class MenuRenderer {
         screen.refresh();
     }
 
+    /**
+     * Очищає екран перед відображенням нового контенту.
+     *
+     * @throws IOException якщо виникне помилка при очищенні екрану.
+     */
     private void clearScreen() throws IOException {
         screen.clear();
     }
 
+    /**
+     * Малює рамку навколо меню для покращення візуального сприйняття.
+     */
     private void drawMenuFrame() {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌──────────────────────────┐");
@@ -58,6 +83,13 @@ public class MenuRenderer {
         textGraphics.putString(0, 13, "└──────────────────────────┘");
     }
 
+    /**
+     * Виділяє опцію меню, додаючи символ "❯" перед текстом опції та змінюючи її колір.
+     *
+     * @param option опція меню.
+     * @param x координата по осі X для відображення опції.
+     * @param y координата по осі Y для відображення опції.
+     */
     private void highlightOption(String option, int x, int y) {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
         textGraphics.putString(x, y, "❯ ");

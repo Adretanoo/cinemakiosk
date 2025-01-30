@@ -10,18 +10,32 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Клас для відображення квитків користувача.
+ */
 public class MyTicketView {
 
-    private List<Ticket> userTickets;
-    private final Screen screen;
-    private final TextGraphics textGraphics;
+    private List<Ticket> userTickets; // Список квитків користувача
+    private final Screen screen; // Екран для відображення інтерфейсу
+    private final TextGraphics textGraphics; // Графічний контекст для малювання тексту
 
+    /**
+     * Конструктор для ініціалізації MyTicketView.
+     *
+     * @param screen екран для відображення
+     * @param textGraphics графічний контекст для малювання тексту
+     */
     public MyTicketView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
-        this.userTickets = loadTestTickets();
+        this.userTickets = loadTestTickets(); // Завантаження тестових квитків
     }
 
+    /**
+     * Завантажує тестові квитки для демонстрації.
+     *
+     * @return список квитків
+     */
     private List<Ticket> loadTestTickets() {
         String json = "["
             + "{\"id\":1,\"price\":100.0,\"sessionId\":0,\"seatNumber\":0,\"quantity\":10,\"orderId\":1,\"movie\":\"Матриця\",\"time\":\"2025-01-29T19:00\"},"
@@ -29,10 +43,14 @@ public class MyTicketView {
             + "]";
 
         Gson gson = new Gson();
-        return gson.fromJson(json, new TypeToken<List<Ticket>>(){}.getType());
+        return gson.fromJson(json, new TypeToken<List<Ticket>>(){}.getType()); // Перетворення JSON в список об'єктів Ticket
     }
 
-    // Метод для показу квитків
+    /**
+     * Відображає список квитків користувача.
+     *
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     public void showTickets() throws IOException {
         screen.clear();
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
@@ -40,16 +58,16 @@ public class MyTicketView {
 
         int row = 4;
         for (Ticket ticket : userTickets) {
+            // Формування рядка з інформацією про квиток
             String ticketInfo = String.format("Квиток ID: %d | Фільм: %s | Ціна: %.2f | Час: %s",
                 ticket.getId(), ticket.getMovie(), ticket.getPrice(), ticket.getStatus());
 
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
-            textGraphics.putString(2, row, ticketInfo);
+            textGraphics.putString(2, row, ticketInfo); // Виведення квитка на екран
             row++;
         }
 
-        screen.refresh();
-        screen.readInput();
-
+        screen.refresh(); // Оновлення екрану
+        screen.readInput(); // Очікування введення користувача
     }
 }

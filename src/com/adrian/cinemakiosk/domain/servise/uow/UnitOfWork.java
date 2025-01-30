@@ -19,6 +19,12 @@ import com.adrian.cinemakiosk.persistence.repository.impl.TicketRepository;
 import com.adrian.cinemakiosk.persistence.repository.impl.UserRepository;
 import java.io.IOException;
 
+/**
+ * Клас, що реалізує патерн "Одиниця Роботи" (Unit of Work).
+ * Використовується для координації збереження змін для кількох репозиторіїв.
+ * Одиниця роботи об'єднує всі репозиторії в одному класі та дозволяє отримувати доступ до конкретного репозиторію
+ * для певного типу сутності.
+ */
 public class UnitOfWork {
 
     private final TicketRepository ticketRepository;
@@ -30,6 +36,11 @@ public class UnitOfWork {
     private final HallRepository hallRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Конструктор, що ініціалізує репозиторії для різних сутностей.
+     *
+     * @throws IOException Якщо виникає помилка при ініціалізації репозиторіїв.
+     */
     public UnitOfWork() throws IOException {
         this.ticketRepository = new TicketRepository();
         this.sessionRepository = new SessionRepository();
@@ -41,6 +52,14 @@ public class UnitOfWork {
         this.userRepository = new UserRepository();
     }
 
+    /**
+     * Отримує відповідний репозиторій для заданого класу сутності.
+     *
+     * @param entityClass Клас сутності, для якої потрібно отримати репозиторій.
+     * @param <T> Тип сутності.
+     * @return Репозиторій для вказаного класу сутності.
+     * @throws IllegalArgumentException Якщо для заданого класу сутності не знайдено відповідний репозиторій.
+     */
     public <T> Repository<T> getRepository(Class<T> entityClass) {
         if (entityClass == Ticket.class) {
             return (Repository<T>) ticketRepository;

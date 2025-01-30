@@ -11,10 +11,21 @@ import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
+/**
+ * Клас для відправлення електронних листів з кодом підтвердження користувачам.
+ * Використовує SMTP-сервер для відправки повідомлень.
+ */
 public class EmailService {
 
+    // Час створення коду підтвердження
     private static LocalDateTime codeCreationTime;
 
+    /**
+     * Відправляє електронний лист з кодом підтвердження на зазначену адресу.
+     *
+     * @param email Адреса електронної пошти отримувача.
+     * @param verificationCode Код підтвердження, який буде надіслано.
+     */
     public static void sendVerificationCodeEmail(String email, String verificationCode) {
         // Властивості для конфігурації підключення до поштового сервера
         Properties properties = new Properties();
@@ -58,12 +69,20 @@ public class EmailService {
         }
     }
 
+    /**
+     * Генерує та відправляє 6-значний код підтвердження на зазначену електронну пошту.
+     *
+     * @param email Адреса електронної пошти отримувача.
+     * @return Сгенерований код підтвердження.
+     */
     public static String generateAndSendVerificationCode(String email) {
         // Генерація 6-значного коду
         String verificationCode = String.valueOf((int) (Math.random() * 900000 + 100000));
 
+        // Відправка коду підтвердження
         sendVerificationCodeEmail(email, verificationCode);
 
+        // Фіксація часу створення коду
         codeCreationTime = LocalDateTime.now();
 
         return verificationCode;

@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+/**
+ * Клас, що відповідає за відображення екрану покупки квитків та управління цією операцією.
+ * Він дозволяє користувачеві вибирати квитки, переглядати їх деталі, а також здійснювати покупку.
+ */
 public class TicketPurchaseView {
 
     private final Screen screen;
@@ -24,6 +28,15 @@ public class TicketPurchaseView {
     private List<Ticket> availableTickets;
     private int selectedIndex = 0;
 
+    /**
+     * Конструктор для ініціалізації екрана покупки квитків.
+     *
+     * @param screen            екран для відображення
+     * @param textGraphics      графічний контекст для малювання на екрані
+     * @param user              користувач, що здійснює покупку
+     * @param ticketRepository  репозиторій для роботи з квитками
+     * @param userRepository    репозиторій для роботи з користувачами
+     */
     public TicketPurchaseView(Screen screen, TextGraphics textGraphics, User user,
         TicketRepository ticketRepository, UserRepository userRepository) {
         this.screen = screen;
@@ -32,6 +45,12 @@ public class TicketPurchaseView {
         this.availableTickets = loadTicketsFromJson("data/tickets.json");
     }
 
+    /**
+     * Завантажує список доступних квитків з JSON файлу.
+     *
+     * @param filePath шлях до файлу з квитками
+     * @return список доступних квитків
+     */
     private List<Ticket> loadTicketsFromJson(String filePath) {
         try {
             Gson gson = new Gson();
@@ -44,23 +63,33 @@ public class TicketPurchaseView {
         }
     }
 
+    /**
+     * Відображає меню покупки квитків і обробляє введення користувача.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     public void showPurchaseMenu() throws IOException {
         while (true) {
             renderMenu();
 
             var keyStroke = screen.readInput();
             if (keyStroke.getKeyType() == KeyType.Escape) {
-                return;
+                return;  // Вихід з меню при натисканні Escape
             } else if (keyStroke.getKeyType() == KeyType.ArrowUp && selectedIndex > 0) {
-                selectedIndex--;
+                selectedIndex--;  // Переміщення вгору по списку
             } else if (keyStroke.getKeyType() == KeyType.ArrowDown && selectedIndex < availableTickets.size() - 1) {
-                selectedIndex++;
+                selectedIndex++;  // Переміщення вниз по списку
             } else if (keyStroke.getKeyType() == KeyType.Enter) {
-                purchaseTicket(selectedIndex);
+                purchaseTicket(selectedIndex);  // Купівля вибраного квитка
             }
         }
     }
 
+    /**
+     * Відображає список квитків і оновлює екран.
+     *
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void renderMenu() throws IOException {
         screen.clear();
 
@@ -77,10 +106,12 @@ public class TicketPurchaseView {
         int startIndex = selectedIndex;
         int endIndex = Math.min(startIndex + 10, availableTickets.size());
 
+        // Відображення квитків на екрані
         for (int i = startIndex; i < endIndex; i++) {
             Ticket ticket = availableTickets.get(i);
             String ticketInfo = String.format("%-4d %-12.2f %-20s %-12s", i + 1, ticket.getPrice(), ticket.getMovie(), ticket.getTime());
 
+            // Підсвічування вибраного квитка
             if (i == selectedIndex) {
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
                 textGraphics.putString(2, 7 + (i - startIndex), "❯ " + ticketInfo);
@@ -92,6 +123,7 @@ public class TicketPurchaseView {
 
         textGraphics.putString(2, 7 + (endIndex - startIndex), "───────────────────────────────────────────────────────────────");
 
+        // Підказка для прокручування списку
         if (availableTickets.size() > 10) {
             textGraphics.putString(2, 9 + (endIndex - startIndex), "Використовуйте ↑↓ для прокручування.");
         }
@@ -99,11 +131,17 @@ public class TicketPurchaseView {
         screen.refresh();
     }
 
-
+    /**
+     * Виконує покупку квитка на основі вибраного індексу.
+     *
+     * @param index індекс вибраного квитка
+     * @throws IOException в разі проблем з відображенням на екрані
+     */
     private void purchaseTicket(int index) throws IOException {
         if (index >= availableTickets.size()) return;
 
         Ticket ticket = availableTickets.get(index);
+        // Перевірка балансу користувача
         if (user.getBalance() < ticket.getPrice()) {
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FF0000"));
             textGraphics.putString(2, 10, "Недостатньо коштів!");
@@ -111,14 +149,14 @@ public class TicketPurchaseView {
             return;
         }
 
+        // Віднімання вартості квитка від балансу користувача
         user.setBalance(user.getBalance() - ticket.getPrice());
         ticket.setStatus("Продано");
         ticket.setOrderId(user.getId());
 
-
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
         textGraphics.putString(2, 10, "Квиток успішно придбано!");
         screen.refresh();
-        availableTickets.remove(index);
+        availableTickets.remove(index);  // Видалення купленого квитка зі списку
     }
 }

@@ -19,11 +19,23 @@ public class MovieManagementView {
     private final TextGraphics textGraphics;
     private final String movieFilePath = "data/movies.json";
 
+    /**
+     * Конструктор для ініціалізації екрану та графіки тексту.
+     *
+     * @param screen екран, на якому відображатиметься інформація
+     * @param textGraphics графічні параметри для відображення тексту
+     */
     public MovieManagementView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
     }
 
+    /**
+     * Відображає головне меню для управління фільмами.
+     * Дозволяє додавати, видаляти, переглядати фільми або виходити.
+     *
+     * @throws IOException якщо виникнуть проблеми з введенням або виведенням
+     */
     public void showMenu() throws IOException {
         String[] menuOptions = {
             "1. Додати фільм",
@@ -58,6 +70,11 @@ public class MovieManagementView {
         }
     }
 
+    /**
+     * Обробляє видалення фільму за вказаним ідентифікатором.
+     *
+     * @throws IOException якщо виникнуть проблеми з введенням або зчитуванням файлів
+     */
     private void handleRemoveMovie() throws IOException {
         screen.clear();
         textGraphics.putString(2, 1, "Введіть ID фільму для видалення:");
@@ -80,6 +97,11 @@ public class MovieManagementView {
         }
     }
 
+    /**
+     * Малює рамку для головного меню.
+     *
+     * @throws IOException якщо виникнуть проблеми з виведенням
+     */
     private void drawMenuFrame() throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌────────────────────────────────┐");
@@ -96,6 +118,13 @@ public class MovieManagementView {
         screen.refresh();
     }
 
+    /**
+     * Малює меню з доступними опціями.
+     *
+     * @param menuOptions список доступних опцій меню
+     * @param selectedIndex індекс вибраної опції
+     * @throws IOException якщо виникнуть проблеми з виведенням
+     */
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         for (int i = 0; i < menuOptions.length; i++) {
             textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
@@ -104,6 +133,11 @@ public class MovieManagementView {
         screen.refresh();
     }
 
+    /**
+     * Обробляє додавання нового фільму.
+     *
+     * @throws IOException якщо виникнуть проблеми з введенням або збереженням фільмів
+     */
     private void handleAddMovie() throws IOException {
         screen.clear();
 
@@ -321,6 +355,12 @@ public class MovieManagementView {
     }
 
 
+    /**
+     * Зчитує список фільмів з файлу.
+     *
+     * @return список фільмів
+     * @throws IOException якщо виникнуть проблеми при зчитуванні файлу
+     */
     private List<Movie> readMoviesFromFile() throws IOException {
         Gson gson = new Gson();
         Type movieListType = new TypeToken<List<Movie>>(){}.getType();
@@ -331,6 +371,12 @@ public class MovieManagementView {
         }
     }
 
+    /**
+     * Зберігає список фільмів у файл.
+     *
+     * @param movies список фільмів для збереження
+     * @throws IOException якщо виникнуть проблеми при збереженні файлу
+     */
     private void saveMoviesToFile(List<Movie> movies) throws IOException {
         Gson gson = new Gson();
         try (Writer writer = new FileWriter(movieFilePath)) {

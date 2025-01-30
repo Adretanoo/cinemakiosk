@@ -11,36 +11,51 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import org.mindrot.bcrypt.BCrypt;
 
+/**
+ * Клас для відображення форми реєстрації користувача в системі.
+ */
 public class RegistrationView {
 
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final UserRepository userRepository;
 
-    public RegistrationView(Screen screen, TextGraphics textGraphics,
-        UserRepository userRepository) {
+    /**
+     * Конструктор для ініціалізації RegistrationView.
+     *
+     * @param screen екран для відображення
+     * @param textGraphics графічний контекст для малювання тексту
+     * @param userRepository репозиторій для збереження користувачів
+     */
+    public RegistrationView(Screen screen, TextGraphics textGraphics, UserRepository userRepository) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Показує форму реєстрації користувача і обробляє введення даних.
+     *
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     public void showRegistrationForm() throws IOException {
         while (true) {
-            screen.clear();
+            screen.clear(); // Очищення екрану
 
+            // Виведення заголовку форми реєстрації
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
-
             textGraphics.putString(0, 0, "┌──────────────────────────┐");
             textGraphics.putString(0, 1, "│                          │");
             textGraphics.putString(0, 2, "│      РЕЄСТРАЦІЯ          │");
             textGraphics.putString(0, 3, "│                          │");
             textGraphics.putString(0, 4, "└──────────────────────────┘");
 
+            // Виведення підказки для завершення реєстрації
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFF00"));
-            textGraphics.putString(2, 18
-                , "Натисніть ESC, щоб завершити реєстрацію.");
+            textGraphics.putString(2, 18, "Натисніть ESC, щоб завершити реєстрацію.");
             textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
 
+            // Введення ім'я користувача
             String username = promptInput("Введіть ім'я користувача:", 6);
             if (username == null) {
                 screen.clear();
@@ -54,6 +69,7 @@ public class RegistrationView {
                 continue;
             }
 
+            // Введення електронної пошти
             String email = promptInput("Введіть електронну пошту:", 8);
             if (email == null) {
                 screen.clear();
@@ -81,6 +97,7 @@ public class RegistrationView {
                 continue;
             }
 
+            // Введення пароля
             String password = promptPassword("Введіть пароль:", 12);
             if (password == null) {
                 screen.clear();
@@ -97,6 +114,7 @@ public class RegistrationView {
             // Хешування пароля
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
+            // Вибір ролі користувача
             String role = promptRole("Виберіть роль (admin/user):", 14);
             if (role == null) {
                 screen.clear();
@@ -109,8 +127,7 @@ public class RegistrationView {
                 userRepository.save(newUser);
 
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#00FF00"));
-                textGraphics.putString(2, 17,
-                    "Реєстрація успішна! Натисніть будь-яку клавішу для продовження.");
+                textGraphics.putString(2, 17, "Реєстрація успішна! Натисніть будь-яку клавішу для продовження.");
                 textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
                 screen.refresh();
                 screen.readInput();
@@ -121,6 +138,14 @@ public class RegistrationView {
         }
     }
 
+    /**
+     * Запитує введення коду підтвердження у користувача.
+     *
+     * @param verificationCode код підтвердження для порівняння
+     * @param yPos позиція для виведення на екрані
+     * @return true, якщо код підтвердження введений правильно
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private boolean promptVerificationCode(String verificationCode, int yPos) throws IOException {
         textGraphics.putString(2, yPos, "Введіть код підтвердження:");
         screen.refresh();
@@ -153,8 +178,14 @@ public class RegistrationView {
         return input.toString().trim().equals(verificationCode);
     }
 
-
-
+    /**
+     * Запитує користувача на введення тексту (наприклад, ім'я користувача, пошту).
+     *
+     * @param prompt підказка для введення
+     * @param yPos позиція для виведення на екрані
+     * @return введений текст або null, якщо ESC натиснуто
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private String promptInput(String prompt, int yPos) throws IOException {
         textGraphics.putString(2, yPos, prompt);
         screen.refresh();
@@ -187,6 +218,14 @@ public class RegistrationView {
         return input.toString().trim();
     }
 
+    /**
+     * Запитує користувача на введення пароля (пароль буде прихований зірочками).
+     *
+     * @param prompt підказка для введення пароля
+     * @param yPos позиція для виведення на екрані
+     * @return введений пароль
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private String promptPassword(String prompt, int yPos) throws IOException {
         textGraphics.putString(2, yPos, prompt);
         screen.refresh();
@@ -220,6 +259,14 @@ public class RegistrationView {
         return input.toString().trim();
     }
 
+    /**
+     * Запитує користувача на введення ролі (admin або user).
+     *
+     * @param prompt підказка для введення ролі
+     * @param yPos позиція для виведення на екрані
+     * @return введена роль
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private String promptRole(String prompt, int yPos) throws IOException {
         textGraphics.putString(2, yPos, prompt);
         screen.refresh();
@@ -237,11 +284,24 @@ public class RegistrationView {
         }
     }
 
+    /**
+     * Очищає область введення для наступного введеного значення.
+     *
+     * @param yPos позиція на екрані, де слід очистити текст
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private void clearInputArea(int yPos) throws IOException {
         textGraphics.putString(2, yPos + 1, " ".repeat(50));
         screen.refresh();
     }
 
+    /**
+     * Виводить повідомлення про помилку.
+     *
+     * @param message повідомлення про помилку
+     * @param yPos позиція для виведення на екрані
+     * @throws IOException якщо виникнуть проблеми при відображенні на екрані
+     */
     private void displayError(String message, int yPos) throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FF0000"));
         textGraphics.putString(2, yPos, "Помилка: " + message);

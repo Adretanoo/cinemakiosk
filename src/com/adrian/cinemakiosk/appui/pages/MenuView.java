@@ -8,6 +8,10 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
+/**
+ * Клас, що відповідає за відображення основного меню програми та обробку вибору користувача.
+ * Меню включає варіанти для реєстрації, входу, перегляду інформації про програму та виходу.
+ */
 public class MenuView {
 
     private final Screen screen;
@@ -15,6 +19,12 @@ public class MenuView {
     private final MenuRenderer menuRenderer;
     private final MenuInputHandler inputHandler;
 
+    /**
+     * Конструктор для ініціалізації MenuView з необхідними залежностями.
+     *
+     * @param screen екран для відображення вмісту.
+     * @param textGraphics об'єкт для малювання тексту на екрані.
+     */
     public MenuView(Screen screen, TextGraphics textGraphics) {
         this.screen = screen;
         this.textGraphics = textGraphics;
@@ -22,6 +32,12 @@ public class MenuView {
         this.inputHandler = new MenuInputHandler(4); // 4 варіанти в меню
     }
 
+    /**
+     * Відображає основне меню з варіантами: реєстрація, вхід, інформація про програму, вихід.
+     * Обробляє введення користувача для вибору опцій.
+     *
+     * @throws IOException якщо виникне помилка при відображенні екрану або читанні введених даних.
+     */
     public void showMainMenu() throws IOException {
         String[] menuOptions = {"Реєстрація", "Вхід", "Про програму", "Вихід"};
 
@@ -36,6 +52,12 @@ public class MenuView {
         }
     }
 
+    /**
+     * Обробляє вибір користувача в основному меню і викликає відповідні дії.
+     *
+     * @param selectedOption вибрана опція в меню.
+     * @throws IOException якщо виникне помилка при виклику відповідних методів.
+     */
     private void handleMenuSelection(String selectedOption) throws IOException {
         switch (selectedOption) {
             case "Реєстрація":

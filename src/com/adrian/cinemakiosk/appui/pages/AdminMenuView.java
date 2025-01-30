@@ -6,17 +6,34 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
+/**
+ * Клас, що відповідає за відображення та управління меню адміністратора.
+ * Адміністратор може вибирати різні опції для управління фільмами, користувачами, квитками або виходу з меню.
+ */
 public class AdminMenuView {
     private final Screen screen;
     private final TextGraphics textGraphics;
     private final String username;
 
+    /**
+     * Конструктор для ініціалізації AdminMenuView з необхідними залежностями.
+     *
+     * @param screen екран для відображення вмісту.
+     * @param textGraphics об'єкт для малювання тексту на екрані.
+     * @param username ім'я адміністратора, яке буде відображено в меню.
+     */
     public AdminMenuView(Screen screen, TextGraphics textGraphics, String username) {
         this.screen = screen;
         this.textGraphics = textGraphics;
         this.username = username;
     }
 
+    /**
+     * Відображає меню адміністратора, надаючи можливість вибору різних опцій.
+     * Користувач може вибрати опцію за допомогою клавіш стрілок і підтвердити вибір клавішею Enter.
+     *
+     * @throws IOException якщо виникне помилка при відображенні екрану або читанні введених даних.
+     */
     public void showMenu() throws IOException {
         String[] menuOptions = {
             "1. Управління фільмами",
@@ -43,6 +60,11 @@ public class AdminMenuView {
         }
     }
 
+    /**
+     * Малює рамку меню на екрані.
+     *
+     * @throws IOException якщо виникне помилка при відображенні екрану.
+     */
     private void drawMenuFrame() throws IOException {
         textGraphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
         textGraphics.putString(0, 0, "┌────────────────────────────────┐");
@@ -59,6 +81,13 @@ public class AdminMenuView {
         screen.refresh();
     }
 
+    /**
+     * Відображає варіанти меню, підсвічуючи вибрану опцію.
+     *
+     * @param menuOptions масив рядків з варіантами меню.
+     * @param selectedIndex індекс вибраної опції.
+     * @throws IOException якщо виникне помилка при відображенні екрану.
+     */
     private void renderMenu(String[] menuOptions, int selectedIndex) throws IOException {
         for (int i = 0; i < menuOptions.length; i++) {
             textGraphics.setForegroundColor(i == selectedIndex ? TextColor.Factory.fromString("#FFFF00") : TextColor.Factory.fromString("#FFFFFF"));
@@ -67,6 +96,12 @@ public class AdminMenuView {
         screen.refresh();
     }
 
+    /**
+     * Обробляє вибір користувача в меню та викликає відповідні дії.
+     *
+     * @param selectedIndex індекс вибраної опції в меню.
+     * @throws IOException якщо виникне помилка при виклику відповідних методів.
+     */
     private void handleMenuSelection(int selectedIndex) throws IOException {
         switch (selectedIndex) {
             case 0 -> handleMovieManagement();
@@ -77,16 +112,31 @@ public class AdminMenuView {
         }
     }
 
+    /**
+     * Викликає меню для управління фільмами.
+     *
+     * @throws IOException якщо виникне помилка при виклику меню управління фільмами.
+     */
     private void handleMovieManagement() throws IOException {
         MovieManagementView movieManagementView = new MovieManagementView(screen, textGraphics);
         movieManagementView.showMenu();
     }
 
+    /**
+     * Викликає меню для управління користувачами.
+     *
+     * @throws IOException якщо виникне помилка при виклику меню управління користувачами.
+     */
     private void handleUserManagement() throws IOException {
         UserManagementView userManagementView = new UserManagementView(screen, textGraphics);
         userManagementView.showMenu();
     }
 
+    /**
+     * Викликає меню для управління квитками.
+     *
+     * @throws IOException якщо виникне помилка при виклику меню управління квитками.
+     */
     private void handleTicketManagement() throws IOException {
         TicketManagementView ticketManagementView = new TicketManagementView(screen, textGraphics);
         ticketManagementView.showMenu();
